@@ -34,7 +34,8 @@ CREATE TABLE `Company` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*Start nathan additions*/
-DROP TABLE IF EXISTS 'User';
+DROP TABLE IF EXISTS `User`;
+
 CREATE TABLE `User` (
   `username` VARCHAR(45) NOT NULL,
   `status` VARCHAR(45) NULL,
@@ -44,14 +45,14 @@ CREATE TABLE `User` (
   `#CreditCard` int(11) NULL,
   PRIMARY KEY (`username`));
 
-DROP TABLE IF EXISTS 'Movie'
+DROP TABLE IF EXISTS `Movie`;
 CREATE TABLE `Movie` (
   `releaseDate` DATE NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `duration` VARCHAR(45) NULL,
   PRIMARY KEY (`releaseDate`, `name`));
 
-DROP TABLE IF EXISTS 'Customer'
+DROP TABLE IF EXISTS `Customer`;
 CREATE TABLE `Customer` (
   `username` VARCHAR(45) NOT NULL,
   `#MovieSeened` INT(11) NULL,
@@ -62,7 +63,7 @@ CREATE TABLE `Customer` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-DROP TABLE IF EXISTS 'Employee'
+DROP TABLE IF EXISTS `Employee`;
 CREATE TABLE `Employee` (
   `username` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`username`),
@@ -72,7 +73,7 @@ CREATE TABLE `Employee` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-DROP TABLE IF EXISTS 'Admin'
+DROP TABLE IF EXISTS `Admin`;
 CREATE TABLE `Admin` (
   `username` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`username`),
@@ -82,7 +83,7 @@ CREATE TABLE `Admin` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-DROP TABLE IF EXISTS 'Manager'
+DROP TABLE IF EXISTS `Manager`;
 CREATE TABLE `Manager` (
   `username` VARCHAR(45) NOT NULL,
   `companyName` VARCHAR(45) NULL,
@@ -167,7 +168,7 @@ CREATE TABLE `Theater` (
   `zipcode` CHAR(5) NULL,
   `capacity` INT NULL,
   PRIMARY KEY (`companyName`, `name`),
-  CONSTRAINT `fk1`
+  CONSTRAINT `fk9`
     FOREIGN KEY (`companyName`)
     REFERENCES `movie_theater`.`Company` (`name`)
     ON DELETE CASCADE
@@ -201,3 +202,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2019-10-24 14:15:50
+
+
