@@ -54,7 +54,6 @@ CREATE TABLE `movie_theater`.`Manager` (
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
   PRIMARY KEY (`username`),
-  INDEX `fk5_idx` (`companyName` ASC),
   CONSTRAINT `fk4`
     FOREIGN KEY (`username`)
     REFERENCES `movie_theater`.`User` (`username`)
@@ -70,7 +69,6 @@ CREATE TABLE `movie_theater`.`CreditCard` (
   `creditCardNum` CHAR(12) NOT NULL,
   `customerName` VARCHAR(45) NULL,
   PRIMARY KEY (`creditCardNum`),
-  INDEX `fk6_idx` (`customerName` ASC),
   CONSTRAINT `fk6`
     FOREIGN KEY (`customerName`)
     REFERENCES `movie_theater`.`Customer` (`username`)
@@ -86,7 +84,6 @@ CREATE TABLE `movie_theater`.`Theater` (
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
   PRIMARY KEY (`companyName`, `name`),
-  INDEX `fk8_idx` (`manager` ASC),
   CONSTRAINT `fk7`
     FOREIGN KEY (`companyName`)
     REFERENCES `movie_theater`.`Company` (`name`)
@@ -105,8 +102,6 @@ CREATE TABLE `movie_theater`.`Visit` (
   `theaterName` VARCHAR(45) NOT NULL,  
   `user` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk9_idx` (`theaterName` ASC, `companyName` ASC),
-  INDEX `fk10_idx` (`user` ASC),
   CONSTRAINT `fk9`
     FOREIGN KEY (`companyName`,`theaterName`)
     REFERENCES `movie_theater`.`Theater` (`companyName`,`name`)
@@ -125,8 +120,6 @@ CREATE TABLE `movie_theater`.`MoviePlay` (
   `movieName` VARCHAR(45) NOT NULL,
   `date` DATE NOT NULL,
   PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `date`),
-  INDEX `fk11_idx` (`movieName` ASC, `movieReleaseDate` ASC),
-  INDEX `fk12_idx` (`companyName` ASC, `theaterName` ASC),
   CONSTRAINT `fk11`
     FOREIGN KEY (`companyName` , `theaterName`)
     REFERENCES `movie_theater`.`Theater` (`companyName` , `name`)
@@ -146,8 +139,6 @@ CREATE TABLE `movie_theater`.`Transaction` (
   `movieName` VARCHAR(45) NOT NULL,
   `moviePlayDate` DATE NOT NULL,
   PRIMARY KEY (`creditCard`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
-  INDEX `fk13_idx` (`creditCard` ASC),
-  INDEX `fk14_idx` (`companyName` ASC, `theaterName` ASC, `movieReleaseDate` ASC, `movieName` ASC, `moviePlayDate` ASC),
   CONSTRAINT `fk13`
     FOREIGN KEY (`creditCard`)
     REFERENCES `movie_theater`.`CreditCard` (`creditCardNum`)
