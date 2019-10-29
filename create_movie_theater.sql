@@ -18,6 +18,29 @@ USE `movie_theater`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `Admin`
+--
+
+DROP TABLE IF EXISTS `Admin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Admin` (
+  `username` varchar(45) NOT NULL,
+  PRIMARY KEY (`username`),
+  CONSTRAINT `fk3` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Admin`
+--
+
+LOCK TABLES `Admin` WRITE;
+/*!40000 ALTER TABLE `Admin` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Admin` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Company`
 --
 
@@ -33,78 +56,14 @@ CREATE TABLE `Company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-/*Start nathan additions*/
-DROP TABLE IF EXISTS `User`;
+--
+-- Dumping data for table `Company`
+--
 
-CREATE TABLE `User` (
-  `username` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
-  `firstName` VARCHAR(45) NULL,
-  `lastName` VARCHAR(45) NULL,
-  `#CreditCard` int(11) NULL,
-  PRIMARY KEY (`username`));
-
-DROP TABLE IF EXISTS `Movie`;
-CREATE TABLE `Movie` (
-  `releaseDate` DATE NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `duration` VARCHAR(45) NULL,
-  PRIMARY KEY (`releaseDate`, `name`));
-
-DROP TABLE IF EXISTS `Customer`;
-CREATE TABLE `Customer` (
-  `username` VARCHAR(45) NOT NULL,
-  `#MovieSeened` INT(11) NULL,
-  PRIMARY KEY (`username`),
-  CONSTRAINT `fk1`
-    FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
-
-DROP TABLE IF EXISTS `Employee`;
-CREATE TABLE `Employee` (
-  `username` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`username`),
-  CONSTRAINT `fk2`
-    FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
-
-DROP TABLE IF EXISTS `Admin`;
-CREATE TABLE `Admin` (
-  `username` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`username`),
-  CONSTRAINT `fk3`
-    FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
-
-DROP TABLE IF EXISTS `Manager`;
-CREATE TABLE `Manager` (
-  `username` VARCHAR(45) NOT NULL,
-  `companyName` VARCHAR(45) NULL,
-  `street` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
-  `state` CHAR(2) NULL,
-  `zipcode` CHAR(5) NULL,
-  PRIMARY KEY (`username`),
-  INDEX `fk5_idx` (`companyName` ASC),
-  CONSTRAINT `fk4`
-    FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk5`
-    FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
-/** end Nathan additions **/
-
+LOCK TABLES `Company` WRITE;
+/*!40000 ALTER TABLE `Company` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Company` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `creditCard`
@@ -114,14 +73,115 @@ DROP TABLE IF EXISTS `creditCard`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `creditCard` (
-  `creditCardNum` int(11) NOT NULL,
-  PRIMARY KEY (`creditCardNum`)
+  `creditCardNum` varchar(16) NOT NULL,
+  `customer` varchar(45) NOT NULL,
+  PRIMARY KEY (`creditCardNum`),
+  KEY `fk6_idx` (`customer`),
+  CONSTRAINT `fk6` FOREIGN KEY (`customer`) REFERENCES `customer` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `creditCard`
 --
+
+LOCK TABLES `creditCard` WRITE;
+/*!40000 ALTER TABLE `creditCard` DISABLE KEYS */;
+/*!40000 ALTER TABLE `creditCard` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Customer`
+--
+
+DROP TABLE IF EXISTS `Customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Customer` (
+  `username` varchar(45) NOT NULL,
+  `#MovieSeened` int(11) DEFAULT NULL,
+  PRIMARY KEY (`username`),
+  CONSTRAINT `fk1` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Customer`
+--
+
+LOCK TABLES `Customer` WRITE;
+/*!40000 ALTER TABLE `Customer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Employee`
+--
+
+DROP TABLE IF EXISTS `Employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Employee` (
+  `username` varchar(45) NOT NULL,
+  PRIMARY KEY (`username`),
+  CONSTRAINT `fk2` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Employee`
+--
+
+LOCK TABLES `Employee` WRITE;
+/*!40000 ALTER TABLE `Employee` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Employee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Manager`
+--
+
+DROP TABLE IF EXISTS `Manager`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Manager` (
+  `username` varchar(45) NOT NULL,
+  `companyName` varchar(45) DEFAULT NULL,
+  `street` varchar(45) DEFAULT NULL,
+  `city` varchar(45) DEFAULT NULL,
+  `state` char(2) DEFAULT NULL,
+  `zipcode` char(5) DEFAULT NULL,
+  PRIMARY KEY (`username`),
+  KEY `fk5_idx` (`companyName`),
+  CONSTRAINT `fk4` FOREIGN KEY (`username`) REFERENCES `user` (`username`),
+  CONSTRAINT `fk5` FOREIGN KEY (`companyName`) REFERENCES `company` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Manager`
+--
+
+LOCK TABLES `Manager` WRITE;
+/*!40000 ALTER TABLE `Manager` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Manager` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Movie`
+--
+
+DROP TABLE IF EXISTS `Movie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Movie` (
+  `releaseDate` date NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `duration` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`releaseDate`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Dumping data for table `Movie`
 --
@@ -139,7 +199,14 @@ DROP TABLE IF EXISTS `MoviePlay`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `MoviePlay` (
-  `date` int(11) DEFAULT NULL
+  `theaterName` varchar(45) NOT NULL,
+  `companyName` varchar(45) NOT NULL,
+  `movieReleaseDate` datetime NOT NULL,
+  `movieName` varchar(45) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`theaterName`,`date`,`movieName`,`movieReleaseDate`,`companyName`),
+  KEY `fk11_idx` (`movieName`),
+  KEY `fk12_idx` (`theaterName`,`companyName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -160,19 +227,19 @@ DROP TABLE IF EXISTS `Theater`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Theater` (
-  `companyName` VARCHAR(45) NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `manager` VARCHAR(45) NULL,
-  `street` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
-  `zipcode` CHAR(5) NULL,
-  `capacity` INT NULL,
-  PRIMARY KEY (`companyName`, `name`),
-  CONSTRAINT `fk9`
-    FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
+  `companyName` varchar(45) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `manager` varchar(45) DEFAULT NULL,
+  `street` varchar(45) DEFAULT NULL,
+  `city` varchar(45) DEFAULT NULL,
+  `state` char(2) DEFAULT NULL,
+  `zipcode` char(5) DEFAULT NULL,
+  `capacity` int(11) DEFAULT NULL,
+  PRIMARY KEY (`companyName`,`name`),
+  KEY `fk10_idx` (`manager`),
+  CONSTRAINT `fk10` FOREIGN KEY (`manager`) REFERENCES `manager` (`username`),
+  CONSTRAINT `fk9` FOREIGN KEY (`companyName`) REFERENCES `company` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,6 +249,62 @@ CREATE TABLE `Theater` (
 LOCK TABLES `Theater` WRITE;
 /*!40000 ALTER TABLE `Theater` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Theater` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Transaction`
+--
+
+DROP TABLE IF EXISTS `Transaction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Transaction` (
+  `creditCard` varchar(16) NOT NULL,
+  `theaterName` varchar(45) NOT NULL,
+  `companyName` varchar(45) NOT NULL,
+  `movieReleaseDate` datetime NOT NULL,
+  `movieName` varchar(45) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`creditCard`),
+  KEY `fk14_idx` (`theaterName`,`companyName`,`movieReleaseDate`,`movieName`,`date`),
+  CONSTRAINT `fk13` FOREIGN KEY (`creditCard`) REFERENCES `creditcard` (`customer`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Transaction`
+--
+
+LOCK TABLES `Transaction` WRITE;
+/*!40000 ALTER TABLE `Transaction` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Transaction` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `User`
+--
+
+DROP TABLE IF EXISTS `User`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `User` (
+  `username` varchar(45) NOT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `firstName` varchar(45) DEFAULT NULL,
+  `lastName` varchar(45) DEFAULT NULL,
+  `#CreditCard` int(19) DEFAULT NULL,
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `User`
+--
+
+LOCK TABLES `User` WRITE;
+/*!40000 ALTER TABLE `User` DISABLE KEYS */;
+/*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -201,6 +324,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-24 14:15:50
-
-
+-- Dump completed on 2019-10-28 20:22:57
