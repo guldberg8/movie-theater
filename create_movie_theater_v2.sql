@@ -53,6 +53,7 @@ CREATE TABLE `movie_theater`.`Manager` (
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
   PRIMARY KEY (`username`),
+  UNIQUE INDEX `manager_address_index` (`zipcode` ASC, `state` ASC, `city` ASC, `street` ASC),
   CONSTRAINT `fk4`
     FOREIGN KEY (`username`)
     REFERENCES `movie_theater`.`User` (`username`)
