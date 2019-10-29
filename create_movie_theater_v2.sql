@@ -7,7 +7,7 @@ CREATE TABLE `movie_theater`.`Company` (
 CREATE TABLE `movie_theater`.`User` (
   `username` VARCHAR(128) NOT NULL,
   `status` VARCHAR(128) NULL,
-  `password` VARCHAR(128) NULL,
+  `password` VARCHAR(128) NOT NULL,
   `firstName` VARCHAR(128) NULL,
   `lastName` VARCHAR(128) NULL,
   PRIMARY KEY (`username`));
@@ -47,7 +47,7 @@ CREATE TABLE `movie_theater`.`Admin` (
 
 CREATE TABLE `movie_theater`.`Manager` (
   `username` VARCHAR(128) NOT NULL,
-  `companyName` VARCHAR(128) NULL,
+  `companyName` VARCHAR(128) NOT NULL,
   `street` VARCHAR(128) NULL,
   `city` VARCHAR(128) NULL,
   `state` CHAR(2) NULL,
