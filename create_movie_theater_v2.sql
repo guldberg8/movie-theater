@@ -1,26 +1,25 @@
 CREATE DATABASE  IF NOT EXISTS `movie_theater`;
 
 CREATE TABLE `movie_theater`.`Company` (
-  `name` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`name`)); 
 
 CREATE TABLE `movie_theater`.`User` (
-  `username` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
-  `firstName` VARCHAR(45) NULL,
-  `lastName` VARCHAR(45) NULL,
+  `username` VARCHAR(128) NOT NULL,
+  `status` VARCHAR(128) NULL,
+  `password` VARCHAR(128) NULL,
+  `firstName` VARCHAR(128) NULL,
+  `lastName` VARCHAR(128) NULL,
   PRIMARY KEY (`username`));
 
 CREATE TABLE `movie_theater`.`Movie` (
   `releaseDate` DATE NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `duration` VARCHAR(45) NULL,
+  `name` VARCHAR(128) NOT NULL,
+  `duration` VARCHAR(128) NULL,
   PRIMARY KEY (`releaseDate`, `name`));
 
 CREATE TABLE `movie_theater`.`Customer` (
-  `username` VARCHAR(45) NOT NULL,
-  `#MovieSeened` INT(11) NULL,
+  `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk1`
     FOREIGN KEY (`username`)
@@ -29,7 +28,7 @@ CREATE TABLE `movie_theater`.`Customer` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Employee` (
-  `username` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk2`
     FOREIGN KEY (`username`)
@@ -38,7 +37,7 @@ CREATE TABLE `movie_theater`.`Employee` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Admin` (
-  `username` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk3`
     FOREIGN KEY (`username`)
@@ -47,10 +46,10 @@ CREATE TABLE `movie_theater`.`Admin` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Manager` (
-  `username` VARCHAR(45) NOT NULL,
-  `companyName` VARCHAR(45) NULL,
-  `street` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
+  `username` VARCHAR(128) NOT NULL,
+  `companyName` VARCHAR(128) NULL,
+  `street` VARCHAR(128) NULL,
+  `city` VARCHAR(128) NULL,
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
   PRIMARY KEY (`username`),
@@ -67,7 +66,7 @@ CREATE TABLE `movie_theater`.`Manager` (
 
 CREATE TABLE `movie_theater`.`CreditCard` (
   `creditCardNum` CHAR(12) NOT NULL,
-  `customerName` VARCHAR(45) NULL,
+  `customerName` VARCHAR(128) NULL,
   PRIMARY KEY (`creditCardNum`),
   CONSTRAINT `fk6`
     FOREIGN KEY (`customerName`)
@@ -76,11 +75,11 @@ CREATE TABLE `movie_theater`.`CreditCard` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Theater` (
-  `companyName` VARCHAR(45) NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `manager` VARCHAR(45) NOT NULL,
-  `street` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
+  `companyName` VARCHAR(128) NOT NULL,
+  `name` VARCHAR(128) NOT NULL,
+  `manager` VARCHAR(128) NOT NULL,
+  `street` VARCHAR(128) NULL,
+  `city` VARCHAR(128) NULL,
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
   PRIMARY KEY (`companyName`, `name`),
@@ -98,9 +97,9 @@ CREATE TABLE `movie_theater`.`Theater` (
 CREATE TABLE `movie_theater`.`Visit` (
   `ID`  INT NOT NULL AUTO_INCREMENT,
   `date` DATE NULL,
-  `companyName` VARCHAR(45) NOT NULL,
-  `theaterName` VARCHAR(45) NOT NULL,  
-  `user` VARCHAR(45) NOT NULL,
+  `companyName` VARCHAR(128) NOT NULL,
+  `theaterName` VARCHAR(128) NOT NULL,  
+  `user` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`ID`),
   CONSTRAINT `fk9`
     FOREIGN KEY (`companyName`,`theaterName`)
@@ -114,10 +113,10 @@ CREATE TABLE `movie_theater`.`Visit` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`MoviePlay` (
-  `companyName` VARCHAR(45) NOT NULL,
-  `theaterName` VARCHAR(45) NOT NULL,
+  `companyName` VARCHAR(128) NOT NULL,
+  `theaterName` VARCHAR(128) NOT NULL,
   `movieReleaseDate` DATE NOT NULL,
-  `movieName` VARCHAR(45) NOT NULL,
+  `movieName` VARCHAR(128) NOT NULL,
   `date` DATE NOT NULL,
   PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `date`),
   CONSTRAINT `fk11`
@@ -133,10 +132,10 @@ CREATE TABLE `movie_theater`.`MoviePlay` (
 
 CREATE TABLE `movie_theater`.`Transaction` (
   `creditCard` CHAR(12) NOT NULL,
-  `companyName` VARCHAR(45) NOT NULL,
-  `theaterName` VARCHAR(45) NOT NULL,
+  `companyName` VARCHAR(128) NOT NULL,
+  `theaterName` VARCHAR(128) NOT NULL,
   `movieReleaseDate` DATE NOT NULL,
-  `movieName` VARCHAR(45) NOT NULL,
+  `movieName` VARCHAR(128) NOT NULL,
   `moviePlayDate` DATE NOT NULL,
   PRIMARY KEY (`creditCard`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
   CONSTRAINT `fk13`
