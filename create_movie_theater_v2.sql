@@ -67,7 +67,7 @@ CREATE TABLE `movie_theater`.`Manager` (
 
 CREATE TABLE `movie_theater`.`CreditCard` (
   `creditCardNum` CHAR(12) NOT NULL,
-  `customerName` VARCHAR(128) NULL,
+  `customerName` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`creditCardNum`),
   CONSTRAINT `fk6`
     FOREIGN KEY (`customerName`)
