@@ -1,10 +1,7 @@
 CREATE DATABASE  IF NOT EXISTS `movie_theater`;
 
 CREATE TABLE `movie_theater`.`Company` (
-  `name` varchar(45) NOT NULL,
-  `#Theater` int(11) DEFAULT NULL,
-  `#CityCovered` int(11) DEFAULT NULL,
-  `#Employee` int(11) DEFAULT NULL,
+  `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`name`)); 
 
 CREATE TABLE `movie_theater`.`User` (
@@ -13,7 +10,6 @@ CREATE TABLE `movie_theater`.`User` (
   `password` VARCHAR(45) NULL,
   `firstName` VARCHAR(45) NULL,
   `lastName` VARCHAR(45) NULL,
-  `#CreditCard` int(11) NULL,
   PRIMARY KEY (`username`));
 
 CREATE TABLE `movie_theater`.`Movie` (
@@ -103,7 +99,7 @@ CREATE TABLE `movie_theater`.`Theater` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Visit` (
-  `ID` INT NOT NULL,
+  `ID`  INT NOT NULL AUTO_INCREMENT,
   `date` DATE NULL,
   `companyName` VARCHAR(45) NOT NULL,
   `theaterName` VARCHAR(45) NOT NULL,  
