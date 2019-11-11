@@ -1,17 +1,6 @@
-################################################################################
-# MAKE SURE YOUR DIRECTORY HAS THE FOLLOWING STRUCTURE                         #
-# user -                                                                       #
-#       ...                                                                    #
-#          - HW08                                                              #
-#                - data                                                        #
-#                       - sets.csv                                             #
-#                       - inventories.csv                                      #
-#                       ...                                                    #
-#                       - part_categories.csv                                  #
-#                - HW08.py                                                     #
-#                - insert_lego_database.pymysql                                #
-#                - lego-database-schema.sql                                    #
-################################################################################
+# WHEN RUNNING, RUN AS: python UI.py <your_sql_password>
+# ALSO NOTE: you have to have run create_team94.sql prior to running this file
+
 import sys, pymysql
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (
@@ -34,32 +23,6 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import (
     QStandardItemModel,
     QStandardItem)
-
-
-class SimpleTableModel(QAbstractTableModel):
-    def __init__(self, data):
-        QAbstractTableModel.__init__(self, None)
-        self.data = data
-        self.headers = [str(k) for k, v in data[0].items()]
-        self.rows = [[str(v) for k, v in record.items()] for record in data]
-    def rowCount(self, parent):
-        return len(self.rows)
-    def columnCount(self, parent):
-        return len(self.headers)
-    def data(self, index, role):
-        if (not index.isValid()) or (role != Qt.DisplayRole):
-            return QVariant()
-        else:
-            return QVariant(self.rows[index.row()][index.column()])
-    def row(self, index):
-        return self.data[index]
-    def headerData(self, section, orientation, role):
-        if role != Qt.DisplayRole:
-            return QVariant()
-        elif orientation == Qt.Vertical:
-            return section + 1
-        else:
-            return self.headers[section]
 
 
 class DbLoginDialog(QDialog):
@@ -89,104 +52,209 @@ class DbLoginDialog(QDialog):
 
     def validate_credentials(self):
         cursor = connection.cursor()
-        query = 'SELECT '
+        query = 'SELECT * FROM User WHERE username = %s;'
+        cursor.execute(query, self.user.text())
+        user_data = cursor.fetchone()
+        entered_pass = self.password.text()
+        if not user_data:
+            inv_login = invalid_credentials()
+            inv_login.exec_()
+        else:
+            if entered_pass == user_data['password']:
+                functionality_delegator(self.user.text())
 
     def register(self):
         print('reg')
 
-
-
-class NavigationWindow(QDialog):
+class invalid_credentials(QDialog):
     def __init__(self):
-        super(NavigationWindow, self).__init__()
-        self.setWindowTitle("Navigation Window")
-        cursor = connection.cursor()
-        cursor.execute('show tables')
-        vbox_layout = QVBoxLayout()
-
-        self.button1 = QPushButton('Question 1')
-        self.button1.clicked.connect(self.q1)
-        vbox_layout.addWidget(self.button1)
-
-        self.setLayout(vbox_layout)
-
-    def q1(self):
-        self.close()
-        Question1().exec()
-
-
-class Question1(QDialog):
-    def __init__(self):
-        super(Question1, self).__init__()
-        curs = connection.cursor()
-        query = 'SELECT * from ADMIN;'
-        curs.execute(query)
-        data = curs.fetchall()[0:50]
-
-        self.setWindowTitle("Question 1")
-        self.table_model = SimpleTableModel(data)
-        self.table_view = QTableView()
-        self.table_view.setModel(self.table_model)
-        self.table_view.setSelectionMode(QAbstractItemView.SelectRows | QAbstractItemView.SingleSelection)
-
-        self.back_button = QPushButton('Back')
+        super(invalid_credentials, self).__init__()
+        self.setWindowTitle("Invalid Credentials")
+        self.message = QLabel('Invalid username/password combination. Please try again.')
+        self.back_button = QPushButton('Close')
         self.back_button.clicked.connect(self.back_button_clicked)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self.table_view)
+        vbox.addWidget(self.message)
         vbox.addWidget(self.back_button)
         self.setLayout(vbox)
 
     def back_button_clicked(self):
         self.close()
-        NavigationWindow().exec()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+# account_type needs to take into account the employee table
+# right now, it just looks in the user table
+def functionality_delegator(username):
+    login.close()
+    cursor = connection.cursor()
+    query = 'SELECT * FROM User WHERE username = %s;'
+    cursor.execute(query, username)
+    user_data = cursor.fetchone()
+    account_type = user_data['user_type']
+    if 'Employee' in account_type:
+        cursor = connection.cursor()
+        query = 'SELECT * FROM Employee WHERE username = %s;'
+        cursor.execute(query, username)
+        emp_type = cursor.fetchone()['employeeType']
+        if 'Customer' in account_type:
+            account_type = f'{emp_type}, Customer'
+        else:
+            account_type = emp_type
+
+    if account_type == 'Admin':
+        admin_only_object = admin_only()
+        admin_only_object.exec()
+    elif 'Admin' in account_type and 'Customer' in account_type:
+        admin_customer_object = admin_customer()
+        admin_customer_object.exec()
+    elif account_type == 'Manager':
+        manager_only_object = manager_only()
+        manager_only_object.exec()
+    elif 'Manager' in account_type and 'Customer' in account_type:
+        manager_customer_object = manager_customer()
+        manager_customer_object.exec()
+    elif account_type == 'Customer':
+        customer_only_object = customer_only()
+        customer_only_object.exec()
+    elif account_type == 'User':
+        user_only_object = user_only()
+        user_only_object.exec()
 
 
+class admin_only(QDialog):
+    def __init__(self):
+        super(admin_only, self).__init__()
+        self.setWindowTitle("Admin-Only Functionality")
+        self.message = QLabel('Admin-Only Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
 
     def back_button_clicked(self):
         self.close()
-        NavigationWindow().exec()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
 
+class admin_customer(QDialog):
+    def __init__(self):
+        super(admin_only, self).__init__()
+        self.setWindowTitle("Admin-Customer Functionality")
+        self.message = QLabel('Admin-Customer Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
 
-    def show_item(self):
-        current_index = self.table_view.currentIndex().row()
-        selected_item = self.table_model.row(current_index)
-        SetDetailDialog(selected_item).exec()
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
 
-    def enable_show_item_button(self):
-        if self.table_view.currentIndex() == -1:
-            self.show_item_button.setEnabled(False)
-        else:
-            self.show_item_button.setEnabled(True)
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
 
+class manager_only(QDialog):
+    def __init__(self):
+        super(manager_only, self).__init__()
+        self.setWindowTitle("Manager-Only Functionality")
+        self.message = QLabel('Manager-Only Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
 
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
 
-class SetDetailDialog(QDialog):
-    def __init__(self, selected_item):
-        super(SetDetailDialog, self).__init__()
-        self.setWindowTitle("Set Detail Dialog")
-        vbox_layout = QVBoxLayout()
-        button = QDialogButtonBox(QDialogButtonBox.Ok)
-        button.accepted.connect(self.accept)
-        form_group_box = QGroupBox()
-        layout = QFormLayout()
-        for k, v in selected_item.items():
-            key = f'{k}:'
-            if key == 'set_num:':
-                key = 'Set Number:'
-            elif key == 'name:':
-                key = 'Name:'
-            elif key == 'year:':
-                key = 'Year:'
-            elif key == 'theme_id:':
-                key = 'Theme ID:'
-            elif key == 'num_parts:':
-                key = 'Number of Parts:'
-            layout.addRow(QLabel(key), QLabel(str(v)))
-        form_group_box.setLayout(layout)
-        vbox_layout.addWidget(form_group_box)
-        vbox_layout.addWidget(button)
-        self.setLayout(vbox_layout)
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+class manager_customer(QDialog):
+    def __init__(self):
+        super(manager_customer, self).__init__()
+        self.setWindowTitle("Manager-Customer Functionality")
+        self.message = QLabel('Manager-Customer Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
+
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+class customer_only(QDialog):
+    def __init__(self):
+        super(customer_only, self).__init__()
+        self.setWindowTitle("Customer Functionality")
+        self.message = QLabel('Customer Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
+
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+class user_only(QDialog):
+    def __init__(self):
+        super(user_only, self).__init__()
+        self.setWindowTitle("User Functionality")
+        self.message = QLabel('User Functionality')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
+
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+# class NavigationWindow(QDialog):
+#     def __init__(self):
+#         super(NavigationWindow, self).__init__()
+#         self.setWindowTitle("Navigation Window")
+#         cursor = connection.cursor()
+#         cursor.execute('show tables')
+#         vbox_layout = QVBoxLayout()
+#
+#         self.button1 = QPushButton('Question 1')
+#         self.button1.clicked.connect(self.q1)
+#         vbox_layout.addWidget(self.button1)
+#
+#         self.setLayout(vbox_layout)
+#
+#     def q1(self):
+#         self.close()
+#         Question1().exec()
 
 
 if __name__=='__main__':
@@ -199,6 +267,8 @@ if __name__=='__main__':
                                  db='Team94',
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
+
+
     login = DbLoginDialog()
     login.show()
     sys.exit(app.exec_())

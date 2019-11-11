@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `Team94` /*!40100 DEFAULT CHARACTER SET utf8mb4 C
 USE `Team94`;
 -- MySQL dump 10.13  Distrib 8.0.17, for macos10.14 (x86_64)
 --
--- Host: localhost    Database: movie_theater
+-- Host: localhost    Database: Team94
 -- ------------------------------------------------------
 -- Server version	8.0.17
 
@@ -123,6 +123,13 @@ DROP TABLE IF EXISTS `Employee`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Employee` (
   `username` varchar(45) NOT NULL,
+  `manStreet` varchar(45) DEFAULT NULL,
+  `manCity` varchar(45) DEFAULT NULL,
+  `manState` varchar(45) DEFAULT NULL,
+  `manZipcode` varchar(45) DEFAULT NULL,
+  `employeeType` varchar(45) DEFAULT NULL,
+  `comName` varchar(45) DEFAULT NULL,
+  `thName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk2` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -134,6 +141,7 @@ CREATE TABLE `Employee` (
 
 LOCK TABLES `Employee` WRITE;
 /*!40000 ALTER TABLE `Employee` DISABLE KEYS */;
+INSERT INTO `Employee` VALUES ('',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `Employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,6 +302,7 @@ CREATE TABLE `User` (
   `firstName` varchar(45) DEFAULT NULL,
   `lastName` varchar(45) DEFAULT NULL,
   `#CreditCard` int(19) DEFAULT NULL,
+  `user_type` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -304,15 +313,16 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` VALUES ('',NULL,NULL,NULL,NULL,NULL,'');
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'movie_theater'
+-- Dumping events for database 'Team94'
 --
 
 --
--- Dumping routines for database 'movie_theater'
+-- Dumping routines for database 'Team94'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -324,4 +334,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-28 20:22:57
+-- Dump completed on 2019-11-11 17:42:13
