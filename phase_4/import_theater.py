@@ -9,11 +9,13 @@ def csvExtractor(csvFile, cursor, connection):
         dictList = [dict(row) for row in dictreader]
     print(dictList)
     table = [list(dict.values()) for dict in dictList]
-    table = table[0:30]
-    data = [(i[0]) for i in table]
+    table = table[1:30]
+    data = [(i[0], i[1], i[2], i[3], i[4], i[6]) for i in table]
     print(data)
     #query = 'INSERT INTO User (username, status, password, firstName, lastName) values (%s, %s, %s, %s, %s);'
-    query = 'INSERT INTO Employee (username) values (%s);'
+    # query = 'INSERT INTO Employee (username) values (%s);'
+    query = 'INSERT INTO Manager (username, street, city, state, zipcode, companyName) values (%s, %s, %s, %s, %s, %s);'
+    #query = 'INSERT INTO Company (name) values (%s);'
     cursor.executemany(query, data)
     connection.commit()
     connection.close()

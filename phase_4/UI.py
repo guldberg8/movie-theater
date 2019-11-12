@@ -90,19 +90,22 @@ class invalid_credentials(QDialog):
 def functionality_delegator(username):
     login.close()
     cursor = connection.cursor()
-    query = 'SELECT * FROM User WHERE username = %s;'
+
+    query = 'SELECT * FROM Employee WHERE username = %s;'
     cursor.execute(query, username)
-    user_data = cursor.fetchone()
-    account_type = user_data['user_type']
-    if 'Employee' in account_type:
-        cursor = connection.cursor()
-        query = 'SELECT * FROM Employee WHERE username = %s;'
+    emp = cursor.fetchone()
+
+    if emp == None:
+        account_type = 'Customer'
+    else:
+        query = 'SELECT * FROM Manager WHERE username = %s;'
         cursor.execute(query, username)
-        emp_type = cursor.fetchone()['employeeType']
-        if 'Customer' in account_type:
-            account_type = f'{emp_type}, Customer'
+        manager = cursor.fetchone()
+        if not manager:
+            emp_type = 'Admin'
         else:
-            account_type = emp_type
+            emp_type = 'Manager'
+        account_type = f'{emp_type}, Customer'
 
     if account_type == 'Admin':
         admin_only_object = admin_only()
@@ -145,7 +148,7 @@ class admin_only(QDialog):
 
 class admin_customer(QDialog):
     def __init__(self):
-        super(admin_only, self).__init__()
+        super(admin_customer, self).__init__()
         self.setWindowTitle("Admin-Customer Functionality")
         self.message = QLabel('Admin-Customer Functionality')
         self.back_button = QPushButton('Close')
@@ -238,23 +241,6 @@ class user_only(QDialog):
         login.password.setFocus()
         login.exec()
 
-# class NavigationWindow(QDialog):
-#     def __init__(self):
-#         super(NavigationWindow, self).__init__()
-#         self.setWindowTitle("Navigation Window")
-#         cursor = connection.cursor()
-#         cursor.execute('show tables')
-#         vbox_layout = QVBoxLayout()
-#
-#         self.button1 = QPushButton('Question 1')
-#         self.button1.clicked.connect(self.q1)
-#         vbox_layout.addWidget(self.button1)
-#
-#         self.setLayout(vbox_layout)
-#
-#     def q1(self):
-#         self.close()
-#         Question1().exec()
 
 
 if __name__=='__main__':
