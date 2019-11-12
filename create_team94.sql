@@ -49,9 +49,6 @@ DROP TABLE IF EXISTS `Company`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Company` (
   `name` varchar(45) NOT NULL,
-  `#Theater` int(11) DEFAULT NULL,
-  `#CityCovered` int(11) DEFAULT NULL,
-  `#Employee` int(11) DEFAULT NULL,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -74,10 +71,10 @@ DROP TABLE IF EXISTS `creditCard`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `creditCard` (
   `creditCardNum` varchar(16) NOT NULL,
-  `customer` varchar(45) NOT NULL,
+  `username` varchar(45) NOT NULL,
   PRIMARY KEY (`creditCardNum`),
-  KEY `fk6_idx` (`customer`),
-  CONSTRAINT `fk6` FOREIGN KEY (`customer`) REFERENCES `customer` (`username`)
+  KEY `fk6_idx` (`username`),
+  CONSTRAINT `fk6` FOREIGN KEY (`username`) REFERENCES `customer` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -99,7 +96,6 @@ DROP TABLE IF EXISTS `Customer`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Customer` (
   `username` varchar(45) NOT NULL,
-  `#MovieSeened` int(11) DEFAULT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk1` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -134,6 +130,7 @@ CREATE TABLE `Employee` (
 
 LOCK TABLES `Employee` WRITE;
 /*!40000 ALTER TABLE `Employee` DISABLE KEYS */;
+INSERT INTO `Employee` VALUES ('calcultron'),('cool_class4400'),('entropyRox'),('fatherAI'),('georgep'),('ghcghc'),('imbatman'),('manager1'),('manager2'),('manager3'),('manager4'),('radioactivePoRa');
 /*!40000 ALTER TABLE `Employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,10 +172,10 @@ DROP TABLE IF EXISTS `Movie`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Movie` (
-  `releaseDate` date NOT NULL,
-  `name` varchar(45) NOT NULL,
+  `movReleaseDate` date NOT NULL,
+  `movName` varchar(45) NOT NULL,
   `duration` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`releaseDate`,`name`)
+  PRIMARY KEY (`movReleaseDate`,`movName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -228,16 +225,16 @@ DROP TABLE IF EXISTS `Theater`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Theater` (
   `companyName` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `manager` varchar(45) DEFAULT NULL,
+  `theaterName` varchar(45) NOT NULL,
+  `managerUsername` varchar(45) DEFAULT NULL,
   `street` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `state` char(2) DEFAULT NULL,
   `zipcode` char(5) DEFAULT NULL,
   `capacity` int(11) DEFAULT NULL,
-  PRIMARY KEY (`companyName`,`name`),
-  KEY `fk10_idx` (`manager`),
-  CONSTRAINT `fk10` FOREIGN KEY (`manager`) REFERENCES `manager` (`username`),
+  PRIMARY KEY (`companyName`,`theaterName`),
+  KEY `fk10_idx` (`managerUsername`),
+  CONSTRAINT `fk10` FOREIGN KEY (`managerUsername`) REFERENCES `manager` (`username`),
   CONSTRAINT `fk9` FOREIGN KEY (`companyName`) REFERENCES `company` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -267,7 +264,7 @@ CREATE TABLE `Transaction` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`creditCard`),
   KEY `fk14_idx` (`theaterName`,`companyName`,`movieReleaseDate`,`movieName`,`date`),
-  CONSTRAINT `fk13` FOREIGN KEY (`creditCard`) REFERENCES `creditcard` (`customer`)
+  CONSTRAINT `fk13` FOREIGN KEY (`creditCard`) REFERENCES `creditcard` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -304,6 +301,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` VALUES ('calcultron','Approved','333333333','Dwight','Schrute',NULL),('calcultron2','Approved','444444444','Jim','Halpert',NULL),('calcwizard','Approved','222222222','Issac','Newton',NULL),('clarinetbeast','Declined','999999999','Squidward','Tentacles',NULL),('cool_class4400','Approved','333333333','A. TA','Washere',NULL),('DNAhelix','Approved','777777777','Rosalind','Franklin',NULL),('does2Much','Approved','1212121212','Carl','Gauss',NULL),('eeqmcsquare','Approved','111111110','Albert','Einstein',NULL),('entropyRox','Approved','999999999','Claude','Shannon',NULL),('fatherAI','Approved','222222222','Alan','Turing',NULL),('fullMetal','Approved','111111100','Edward','Elric',NULL),('gdanger','Declined','555555555','Gary','Danger',NULL),('georgep','Approved','111111111','George P.','Burdell',NULL),('ghcghc','Approved','666666666','Grace','Hopper',NULL),('ilikemoney$$','Approved','111111110','Eugene','Krabs',NULL),('imbatman','Approved','666666666','Bruce','Wayne',NULL),('imready','Approved','777777777','Spongebob','Squarepants',NULL),('isthisthekrustykrab','Approved','888888888','Patrick','Star',NULL),('manager1','Approved','1122112211','Manager','One',NULL),('manager2','Approved','3131313131','Manager','Two',NULL),('manager3','Approved','8787878787','Three','Three',NULL),('manager4','Approved','5755555555','Four','Four',NULL),('notFullMetal','Approved','111111100','Alphonse','Elric',NULL),('programerAAL','Approved','3131313131','Ada','Lovelace',NULL),('radioactivePoRa','Approved','1313131313','Marie','Curie',NULL),('RitzLover28','Approved','444444444','Abby','Normal',NULL),('smith_j','Pending','333333333','John','Smith',NULL),('texasStarKarate','Declined','111111110','Sandy','Cheeks',NULL),('thePiGuy3.14','Approved','1111111111','Archimedes','Syracuse',NULL),('theScienceGuy','Approved','999999999','Bill','Nye',NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -324,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 20:10:21
+-- Dump completed on 2019-11-11 20:42:02
