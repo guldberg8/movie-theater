@@ -18,16 +18,14 @@ def connect(args):
         return print(f'The following Exception occured, {e}\n\n{args[1]} could not log into MySQL database')
 
 def csvExtractor(csvFile):
-    csvFile = csvFile.replace('xlsx', 'csv')
-    print(csvFile)
     with open(csvFile) as fin:
         dictreader = csv.DictReader(fin)
         dictList = [dict(row) for row in dictreader]
     print(dictList)
-    monsterTable = [(int(i['ID_number']), i['name'], i['monster_type'], i['scare_type'], \
-                    float(i['avg_score']), int(i['num_of_screams']), i['color'], \
-                    int(i['eye_count']), i['monster_fear']) for i in dictList]
-    return monsterTable
+    table = [list(dict.values()) for dict in dictList]
+    print(table)
+    query = 'INSERT INTO User (username, )'
+    return
 
 
 def insert(theater_info):
@@ -40,7 +38,8 @@ def insert(theater_info):
 
 
 def main(args):
-    theater_info = csvExtractor(args[0])
+    theater_info = csvExtractor(f'csv_files/{args[0]}')
+    print(theater_info)
     insert(theater_info)
 
 
