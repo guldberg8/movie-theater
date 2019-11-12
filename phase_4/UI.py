@@ -249,7 +249,7 @@ if __name__=='__main__':
     try:
         password = args[1]
     except:
-        password = 'placeholder'
+        password = ''
     connection = pymysql.connect(host='localhost',
                                  user='root',
                                  password=password,
