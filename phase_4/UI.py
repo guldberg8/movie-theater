@@ -246,10 +246,12 @@ class user_only(QDialog):
 if __name__=='__main__':
     app = QApplication(sys.argv)
     args = sys.argv
-
+    password = args[1]
+    if not args[1]:
+        password = ''
     connection = pymysql.connect(host='localhost',
                                  user='root',
-                                 password=args[1],
+                                 password=password,
                                  db='Team94',
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
