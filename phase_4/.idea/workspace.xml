@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ce322d84-0df7-43b2-95a2-10d7c3fa2417" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI.py" afterDir="false" />
-    </list>
+    <list default="true" id="ce322d84-0df7-43b2-95a2-10d7c3fa2417" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,6 +9,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1TTYQs7D3sZTxZxEN9Ogn8dbFMV" />
@@ -88,6 +90,8 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.import_theater" />
+        <item itemvalue="Python.UI" />
         <item itemvalue="Python.UI" />
         <item itemvalue="Python.import_theater" />
       </list>
@@ -123,7 +127,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -131,7 +137,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="'Modified to account for no password'" />
-    <option name="LAST_COMMIT_MESSAGE" value="'Modified to account for no password'" />
+    <MESSAGE value="Added branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added branch" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/phase_4$UI.coverage" NAME="UI Coverage Results" MODIFIED="1573584525479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
