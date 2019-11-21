@@ -1,7 +1,7 @@
 # WHEN RUNNING, RUN AS: python UI.py <your_sql_password>
 # ALSO NOTE: you have to have run create_team94.sql prior to running this file
 
-import sys, pymysql
+import sys, pymysql, registration_classes
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (
     QApplication,
@@ -25,6 +25,7 @@ from PyQt5.QtGui import (
     QStandardItem)
 
 
+
 class DbLoginDialog(QDialog):
     def __init__(self):
         super(DbLoginDialog, self).__init__()
@@ -40,7 +41,7 @@ class DbLoginDialog(QDialog):
         login_button = QPushButton('Login')
         register_button = QPushButton('Register')
         login_button.clicked.connect(self.validate_credentials)
-        register_button.clicked.connect(self.register)
+        register_button.clicked.connect(self.check_register)
         layout.addRow(login_button, register_button)
         form_group_box.setLayout(layout)
 
@@ -63,8 +64,93 @@ class DbLoginDialog(QDialog):
             if entered_pass == user_data['password']:
                 functionality_delegator(self.user.text())
 
+    def check_register(self):
+        cursor = connection.cursor()
+        query = 'SELECT * FROM User WHERE username = %s;'
+        cursor.execute(query, self.user.text())
+        user_data = cursor.fetchone()
+        # If username already in database
+        if not user_data or self.user.text() == '':
+            self.register()
+        else:
+            self.user_exists()
+
+    def user_exists(self):
+        user_exists = existing_user_popup(self.user.text())
+        user_exists.exec_()
+
     def register(self):
-        print('reg')
+        register = register_navigation()
+        register.exec_()
+        login.close()
+
+class register_navigation(QDialog):
+    def __init__(self):
+        super(register_navigation, self).__init__()
+        self.setWindowTitle("Registration Navigation")
+        vbox_layout = QVBoxLayout()
+
+        user_button = QPushButton('User Only')
+        user_button.clicked.connect(self.user_only)
+        customer_button = QPushButton('Customer Only')
+        customer_button.clicked.connect(self.customer_only)
+        manager_button = QPushButton('Manager Only')
+        manager_button.clicked.connect(self.manager_only)
+        man_cust_button = QPushButton('Manager-Customer')
+        man_cust_button.clicked.connect(self.manager_customer)
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_clicked)
+
+        vbox_layout.addWidget(user_button)
+        vbox_layout.addWidget(customer_button)
+        vbox_layout.addWidget(manager_button)
+        vbox_layout.addWidget(man_cust_button)
+        vbox_layout.addWidget(back_button)
+        self.setLayout(vbox_layout)
+
+
+    def user_only(self):
+        user_reg_screen = registration_classes.user_register_popup(self)
+        user_reg_screen.exec_()
+
+    def customer_only(self):
+        user_reg_screen = registration_classes.cust_registration_popup(self)
+        user_reg_screen.exec_()
+
+    def manager_only(self):
+        user_reg_screen = registration_classes.man_registration_popup(self)
+        user_reg_screen.exec_()
+
+    def manager_customer(self):
+        user_reg_screen = registration_classes.man_cust_registration_popup(self)
+        user_reg_screen.exec_()
+
+    def back_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
+
+class existing_user_popup(QDialog):
+    def __init__(self, username):
+        super(existing_user_popup, self).__init__()
+        self.setWindowTitle("Existing Username")
+        self.message = QLabel(f'{username} already exists. Please try to log in with a valid password.')
+        self.back_button = QPushButton('Close')
+        self.back_button.clicked.connect(self.back_button_clicked)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.message)
+        vbox.addWidget(self.back_button)
+        self.setLayout(vbox)
+
+    def back_button_clicked(self):
+        self.close()
+        login.password.clear()
+        login.password.setFocus()
+        login.exec()
+
 
 class invalid_credentials(QDialog):
     def __init__(self):
