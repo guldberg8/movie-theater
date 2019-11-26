@@ -62,9 +62,13 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS user_login;
 DELIMITER $$
-CREATE PROCEDURE `user_login`()
+CREATE PROCEDURE `user_login`(IN i_username VARCHAR(50), IN i_password VARCHAR(50))
 BEGIN
-		
+	DROP TABLE IF EXISTS UserLogin
+	CREATE TABLE UserLogin
+	SELECT username, status, isCustomer, isAdmin, isManager
+	FROM User
+    WHERE (username = i_username) AND (password = i_password)
 END$$
 DELIMITER ;
 
