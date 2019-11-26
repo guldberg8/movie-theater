@@ -115,7 +115,7 @@ CREATE PROCEDURE `manager_customer_register`(IN i_username VARCHAR(50), IN i_pas
 BEGIN
 	INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, i_password, i_firstname, i_lastname) 
 	INSERT INTO Customer (username) VALUES (i_username)
-	INSERT INTO MANAGER (username, street, city, state, zipcode, companyName) VALUES (i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName)
+	INSERT INTO MANAGER (username, street, city, state, zipcode, companyName, theaterName) VALUES (i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName, NULL)
 END$$
 DELIMITER ;
 
@@ -176,7 +176,7 @@ DROP PROCEDURE IF EXISTS admin_create_theater;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_theater`(IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_thStreet VARCHAR(50), IN i_thCity VARCHAR(50), IN i_thState CHAR(2), IN i_thZipcode CHAR(5), IN i_capacity INT, IN i_managerUsername VARCHAR(50))
 BEGIN
-        INSERT INTO ? () VALUES (i_thName, i_comName, i_thStreet, i_thCity, i_thState, i_thZipcode, i_capacity, i_managerUsername)
+        INSERT INTO Theater (companyName, theaterName, street, city, state, zipcode, capacity, managerUsername) VALUES (i_comName, i_thName, i_thStreet, i_thCity, i_thState, i_thZipcode, i_capacity, NULL)
 END$$
 DELIMITER ;
 
@@ -211,7 +211,7 @@ DROP PROCEDURE IF EXISTS admin_create_mov;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_mov`(IN i_movName VARCHAR(50), IN i_movDuration VARCHAR(50), IN i_movReleaseDate VARCHAR(50))
 BEGIN
-        INSERT INTO ? () VALUES (i_movName, i_movDuration, i_movReleaseDate)
+        INSERT INTO Movie (movReleaseDate, movName, duration) VALUES (i_movReleaseDate, i_movName, i_movDuration)
 END$$
 DELIMITER ;
 
@@ -252,7 +252,7 @@ DROP PROCEDURE IF EXISTS customer_view_mov;
 DELIMITER $$
 CREATE PROCEDURE `customer_view_mov`(IN i_creditCardNum CHAR(15), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_movPlayDate DATE)
 BEGIN
-      INSERT INTO ? () VALUES (i_creditCardNum, i_movName, i_movReleaseDate, i_thName, i_comName, i_movPlayDate)  
+      INSERT INTO Transaction (creditCard, theaterName, companyName, movieReleaseDate, movieName, date) VALUES (i_creditCardNum, i_thName, i_comName, i_movReleaseDate, i_movName, i_movPlayDate)  
 END$$
 DELIMITER ;
 
