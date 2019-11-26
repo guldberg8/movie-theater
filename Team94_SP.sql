@@ -78,7 +78,8 @@ DROP PROCEDURE IF EXISTS customer_only_register;
 DELIMITER $$
 CREATE PROCEDURE `customer_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 BEGIN
-	INSERT INTO ? (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname)
+	INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname)
+	INSERT INTO Customer (username) VALUES (i_username)
 END$$
 DELIMITER ;
 
@@ -87,9 +88,9 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS customer_add_creditcard;
 DELIMITER $$
-CREATE PROCEDURE `customer_add_creditcard`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(15))
+CREATE PROCEDURE `customer_add_creditcard`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(16))
 BEGIN
-        INSERT INTO ? () VALUES (i_username, i_creditCardNum)
+        INSERT INTO creditCard (creditCardNum, username) VALUES (i_creditCardNum, i_username)
 END$$
 DELIMITER ;
 
@@ -100,7 +101,8 @@ DROP PROCEDURE IF EXISTS manager_only_register;
 DELIMITER $$
 CREATE PROCEDURE `manager_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50), IN i_comName VARCHAR(50), IN i_empStreet VARCHAR(50), IN i_empCity VARCHAR(50), IN i_empState CHAR(2), IN i_empZipCode CHAR(5))
 BEGIN
-       INSERT INTO ? () VALUES (i_username, i_password, i_firstname, i_lastname, i_comName, i_empStreet, i_empCity, i_empState, i_empZipcode) 
+	INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname)
+        INSERT INTO Manager (username, street, city, state, zipcode, companyName) VALUES (i_username, i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName) 
 END$$
 DELIMITER ;
 
@@ -111,7 +113,9 @@ DROP PROCEDURE IF EXISTS manager_customer_register;
 DELIMITER $$
 CREATE PROCEDURE `manager_customer_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50), IN i_comName VARCHAR(50), IN i_empStreet VARCHAR(50), IN i_empCity VARCHAR(50), IN i_empState CHAR(2), IN i_empZipCode CHAR(5))
 BEGIN
-	INSERT INTO ? () VALUES (i_username, i_password, i_firstname, i_lastname, i_comName, i_empStreet, i_empCity, i_empState, i_empZipcode)
+	INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, i_password, i_firstname, i_lastname) 
+	INSERT INTO Customer (username) VALUES (i_username)
+	INSERT INTO MANAGER (username, street, city, state, zipcode, companyName) VALUES (i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName)
 END$$
 DELIMITER ;
 
@@ -121,7 +125,7 @@ DROP PROCEDURE IF EXISTS manager_customer_add_creditcard;
 DELIMITER $$
 CREATE PROCEDURE `manager_customer_add_creditcardn`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(15))
 BEGIN
-        INSERT INTO ? () VALUES (i_username, i_creditCardNum)
+        INSERT INTO creditCard (creditCardNum, username) VALUES (i_creditCardNum, i_username)
 END$$
 DELIMITER ;
 
