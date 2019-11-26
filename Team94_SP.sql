@@ -146,7 +146,9 @@ DROP PROCEDURE IF EXISTS admin_approve_user;
 DELIMITER $$
 CREATE PROCEDURE `admin_approve_user`(IN i_username VARCHAR(50))
 BEGIN
-        
+        UPDATE User (username, password, firstName, lastName)
+	SET status = 'Approved'
+	WHERE username = i_username
 END$$
 DELIMITER ;
 
@@ -157,7 +159,9 @@ DROP PROCEDURE IF EXISTS admin_decline_user;
 DELIMITER $$
 CREATE PROCEDURE `admin_decline_user`(IN i_username VARCHAR(50))
 BEGIN
-        
+	UPDATE User (username, password, firstName, lastName)
+	SET status = 'Declined'
+	WHERE username = i_username
 END$$
 DELIMITER ;
 
