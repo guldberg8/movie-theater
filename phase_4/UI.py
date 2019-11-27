@@ -1,7 +1,7 @@
 # WHEN RUNNING, RUN AS: python UI.py <your_sql_password>
 # ALSO NOTE: you have to have run create_team94.sql prior to running this file
 
-import sys, pymysql, registration_classes
+import sys, pymysql, registration_classes, functionality_classes
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (
     QApplication,
@@ -24,15 +24,35 @@ from PyQt5.QtGui import (
     QStandardItemModel,
     QStandardItem)
 
+args = sys.argv
+try:
+    password = args[1]
+except:
+    password = ''
 
+connection = pymysql.connect(host='localhost',
+                             user='root',
+                             password=password,
+                             db='Team94',
+                             charset='utf8mb4',
+                             cursorclass=pymysql.cursors.DictCursor)
+test = True
+
+if test:
+    test_user = 'cool_class4400'
+    test_pass = '333333333'
+else:
+    test_user = ''
+    test_pass = ''
 
 class DbLoginDialog(QDialog):
     def __init__(self):
         super(DbLoginDialog, self).__init__()
         self.setWindowTitle("Atlanta Movie Login")
 
-        self.user = QLineEdit()
-        self.password = QLineEdit()
+        self.user = QLineEdit(test_user)
+        self.password = QLineEdit(test_pass)
+        self.password.setEchoMode(QLineEdit.Password)
 
         form_group_box = QGroupBox("Login Credentials")
         layout = QFormLayout()
@@ -63,6 +83,9 @@ class DbLoginDialog(QDialog):
         else:
             if entered_pass == user_data['password']:
                 functionality_delegator(self.user.text())
+            else:
+                inv = invalid_credentials()
+                inv.exec_()
 
     def check_register(self):
         cursor = connection.cursor()
@@ -171,8 +194,7 @@ class invalid_credentials(QDialog):
         login.password.setFocus()
         login.exec()
 
-# account_type needs to take into account the employee table
-# right now, it just looks in the user table
+
 def functionality_delegator(username):
     login.close()
     cursor = connection.cursor()
@@ -194,155 +216,28 @@ def functionality_delegator(username):
         account_type = f'{emp_type}, Customer'
 
     if account_type == 'Admin':
-        admin_only_object = admin_only()
+        admin_only_object = functionality_classes().admin_only()
         admin_only_object.exec()
     elif 'Admin' in account_type and 'Customer' in account_type:
-        admin_customer_object = admin_customer()
+        admin_customer_object = functionality_classes.admin_customer()
         admin_customer_object.exec()
     elif account_type == 'Manager':
-        manager_only_object = manager_only()
+        manager_only_object = functionality_classes.manager_only()
         manager_only_object.exec()
     elif 'Manager' in account_type and 'Customer' in account_type:
-        manager_customer_object = manager_customer()
+        manager_customer_object = functionality_classes.manager_customer()
         manager_customer_object.exec()
     elif account_type == 'Customer':
-        customer_only_object = customer_only()
+        customer_only_object = functionality_classes.customer_only()
         customer_only_object.exec()
     elif account_type == 'User':
-        user_only_object = user_only()
+        user_only_object = functionality_classes.user_only()
         user_only_object.exec()
-
-
-class admin_only(QDialog):
-    def __init__(self):
-        super(admin_only, self).__init__()
-        self.setWindowTitle("Admin-Only Functionality")
-        self.message = QLabel('Admin-Only Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
-
-class admin_customer(QDialog):
-    def __init__(self):
-        super(admin_customer, self).__init__()
-        self.setWindowTitle("Admin-Customer Functionality")
-        self.message = QLabel('Admin-Customer Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
-
-class manager_only(QDialog):
-    def __init__(self):
-        super(manager_only, self).__init__()
-        self.setWindowTitle("Manager-Only Functionality")
-        self.message = QLabel('Manager-Only Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
-
-class manager_customer(QDialog):
-    def __init__(self):
-        super(manager_customer, self).__init__()
-        self.setWindowTitle("Manager-Customer Functionality")
-        self.message = QLabel('Manager-Customer Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
-
-class customer_only(QDialog):
-    def __init__(self):
-        super(customer_only, self).__init__()
-        self.setWindowTitle("Customer Functionality")
-        self.message = QLabel('Customer Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
-
-class user_only(QDialog):
-    def __init__(self):
-        super(user_only, self).__init__()
-        self.setWindowTitle("User Functionality")
-        self.message = QLabel('User Functionality')
-        self.back_button = QPushButton('Close')
-        self.back_button.clicked.connect(self.back_button_clicked)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.message)
-        vbox.addWidget(self.back_button)
-        self.setLayout(vbox)
-
-    def back_button_clicked(self):
-        self.close()
-        login.password.clear()
-        login.password.setFocus()
-        login.exec()
 
 
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
-    args = sys.argv
-    try:
-        password = args[1]
-    except:
-        password = ''
-    connection = pymysql.connect(host='localhost',
-                                 user='root',
-                                 password=password,
-                                 db='Team94',
-                                 charset='utf8mb4',
-                                 cursorclass=pymysql.cursors.DictCursor)
-
 
     login = DbLoginDialog()
     login.show()
