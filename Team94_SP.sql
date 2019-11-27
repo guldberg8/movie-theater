@@ -24,7 +24,8 @@ DROP PROCEDURE IF EXISTS customer_only_register;
 DELIMITER $$
 CREATE PROCEDURE `customer_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 BEGIN
-        
+        #do you need to select from  user first
+        INSERT INTO customer (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname);
 END$$
 DELIMITER ;
 
@@ -34,7 +35,7 @@ DROP PROCEDURE IF EXISTS customer_add_creditcard;
 DELIMITER $$
 CREATE PROCEDURE `customer_add_creditcard`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(50))
 BEGIN
-        
+        INSERT INTO CreditCard (?, creditCardNum) values (?, i_creditCardNum);
 END$$
 DELIMITER ;
 
@@ -43,7 +44,7 @@ DROP PROCEDURE IF EXISTS manager_only_register;
 DELIMITER $$
 CREATE PROCEDURE `manager_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50), IN i_comName VARCHAR(50), IN i_empStreet VARCHAR(50), IN i_empCity VARCHAR(50), IN i_empState CHAR(3), IN i_empZipCode CHAR(50))
 BEGIN
-        
+        INSERT INTO manager (username, password, firstname, lastname, companyName, street, city, state, zipcode) VALUES (i_username, MD5(i_password), i_firstname, i_lastname, i_comName, i_empStreet, i_empCity, i_empState, i_empZipCode);
 END$$
 DELIMITER ;
 
@@ -53,16 +54,17 @@ DROP PROCEDURE IF EXISTS manager_customer_register;
 DELIMITER $$
 CREATE PROCEDURE `manager_customer_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50), IN i_comName VARCHAR(50), IN i_empStreet VARCHAR(50), IN i_empCity VARCHAR(50), IN i_empState CHAR(3), IN i_empZipCode CHAR(50))
 BEGIN
-        
+        #do you select from user where status is both
+        #what table do values insert into
 END$$
 DELIMITER ;
 
 #Screen 6
 DROP PROCEDURE IF EXISTS manager_customer_add_creditcard;
 DELIMITER $$
-CREATE PROCEDURE `manager_customer_add_creditcardn`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(50))
+CREATE PROCEDURE `manager_customer_add_creditcard`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(50))
 BEGIN
-        
+        INSERT INTO CreditCard (?, creditCardNum) values (?, i_creditCardNum);
 END$$
 DELIMITER ;
 
@@ -90,7 +92,7 @@ DROP PROCEDURE IF EXISTS admin_filter_user;
 DELIMITER $$
 CREATE PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status, IN i_sortBy, IN i_sortDirection)
 BEGIN
-        
+        #do all view and filter reuire separate tables?
 END$$
 DELIMITER ;
 
@@ -105,11 +107,12 @@ END$$
 DELIMITER ;
 
 #Screen 15
+#inconsistency with table variable names and order
 DROP PROCEDURE IF EXISTS admin_create_theater;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_theater`(IN i_thName VARCHAR(50), IN i_thStreet VARCHAR(50), IN i_thCity VARCHAR(50), IN i_thState CHAR(3), IN i_thZipcode CHAR(50), IN i_capacity INT, IN i_manUsername VARCHAR(50))
 BEGIN
-        
+        INSERT INTO Theater (companyName, name, manager, street, city, state, zipcode) values ();
 END$$
 DELIMITER ;
 
@@ -137,7 +140,7 @@ DROP PROCEDURE IF EXISTS admin_create_mov;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_mov`(IN i_movName VARCHAR(50), IN i_movDuration INT, IN i_movReleaseDate DATE)
 BEGIN
-        
+        INSERT INTO Movie (releaseDate, name, duration) values (i_movReleaseDate, i_movName, i_movDuration);
 END$$
 DELIMITER ;
 
@@ -207,6 +210,8 @@ BEGIN
 END$$
 DELIMITER ;
 
+
+
 #Screen 22
 DROP PROCEDURE IF EXISTS user_visit_th;
 DELIMITER $$
@@ -216,6 +221,8 @@ BEGIN
     VALUES (i_thName, i_comName, i_visitDate, i_username);
 END$$
 DELIMITER ;
+
+
 
 #Screen 23
 DROP PROCEDURE IF EXISTS user_filter_visitHistory;
@@ -234,6 +241,11 @@ BEGIN
         (i_maxVisitDate IS NULL OR visitDate <= i_maxVisitDate);
 END$$
 DELIMITER ;
+
+
+
+
+
 
 
 
