@@ -59,7 +59,7 @@ DROP PROCEDURE IF EXISTS manager_customer_register;
 DELIMITER $$
 CREATE PROCEDURE `manager_customer_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50), IN i_comName VARCHAR(50), IN i_empStreet VARCHAR(50), IN i_empCity VARCHAR(50), IN i_empState CHAR(3), IN i_empZipCode CHAR(50))
 BEGIN
-    INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, i_password, i_firstname, i_lastname);
+    INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname);
     INSERT INTO Customer (username) VALUES (i_username);
     INSERT INTO MANAGER (username, street, city, state, zipcode, companyName, theaterName) VALUES (i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName, NULL);
 END$$
