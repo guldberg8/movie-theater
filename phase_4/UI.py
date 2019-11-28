@@ -201,7 +201,13 @@ def functionality_delegator(username):
     emp = cursor.fetchone()
 
     if not emp:
-        account_type = 'Customer'
+        query = 'SELECT * FROM Customer WHERE username = %s;'
+        cursor.execute(query, username)
+        customer = cursor.fetchone()
+        if customer:
+            account_type = 'Customer'
+        else:
+            account_type = 'User'
     else:
         query = 'SELECT * FROM Manager WHERE username = %s;'
         cursor.execute(query, username)
@@ -210,7 +216,12 @@ def functionality_delegator(username):
             emp_type = 'Admin'
         else:
             emp_type = 'Manager'
-        account_type = f'{emp_type}, Customer'
+        account_type = emp_type
+        query = 'SELECT * FROM Customer WHERE username = %s;'
+        cursor.execute(query, username)
+        customer = cursor.fetchone()
+        if customer:
+            account_type = f'{emp_type}, Customer'
 
     if account_type == 'Admin':
         admin_only_object = functionality_classes.admin_only(login)
@@ -230,7 +241,6 @@ def functionality_delegator(username):
     elif account_type == 'User':
         user_only_object = functionality_classes.user_only(login)
         user_only_object.exec()
-
 
 
 if __name__=='__main__':

@@ -20,3 +20,15 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import (
     QStandardItemModel,
     QStandardItem)
+
+
+class theater_overview(QDialog):
+    def __init__(self):
+        super(theater_overview, self).__init__()
+        self.setWindowTitle("Theater Overview")
+
+
+class schedule_movie(QDialog):
+    def __init__(self):
+        super(schedule_movie, self).__init__()
+        self.setWindowTitle("Schedule Movie")

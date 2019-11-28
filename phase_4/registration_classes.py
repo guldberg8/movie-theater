@@ -132,7 +132,8 @@ class user_register_popup(QDialog):
                                [self.user.text(), 'Approved', self.password.text(),
                                 self.first_name.text(), self.last_name.text()])
             connection.commit()
-            functionality_delegator('user')
+            self.close()
+            functionality_delegator('user', self.nav_screen)
 
     def back_clicked(self):
         self.close()
@@ -218,8 +219,8 @@ class cust_registration_popup(QDialog):
 
             cursor.execute(query, [username])
             connection.commit()
-
-            functionality_delegator('customer')
+            self.close()
+            functionality_delegator('customer', self.nav_screen)
 
     def back_clicked(self):
         self.close()
@@ -229,7 +230,7 @@ class cust_registration_popup(QDialog):
 class man_cust_registration_popup(QDialog):
     def __init__(self, nav_screen):
         super(man_cust_registration_popup, self).__init__()
-        self.setWindowTitle("Manager Registration")
+        self.setWindowTitle("Manager-Customer Registration")
         self.nav_screen = nav_screen
         self.user = QLineEdit()
         self.password = QLineEdit()
@@ -244,7 +245,7 @@ class man_cust_registration_popup(QDialog):
         self.zipcode = QLineEdit()
         self.company = QComboBox()
         self.line_edits = [self.user, self.password, self.first_name, self.last_name, self.confirm_pass,
-                           self.address, self.city, self.state, self.zipcode, self.company]
+                           self.address, self.city, self.zipcode]
 
         states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
                   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
@@ -317,8 +318,9 @@ class man_cust_registration_popup(QDialog):
         cursor.execute(query, username)
         user = cursor.fetchone()
 
-        check_address_query = 'SELECT * FROM Manager WHERE street = %s;'
-        cursor.execute(check_address_query, self.address.text())
+        check_address_query = 'SELECT * FROM Manager WHERE street = %s and state = %s and city = %s and zipcode = %s;'
+        cursor.execute(check_address_query,
+                       [self.address.text(), self.state.currentText(), self.city.text(), self.zipcode.text()])
         street_address_found = cursor.fetchone()
 
         empty = False
@@ -351,9 +353,10 @@ class man_cust_registration_popup(QDialog):
             cursor.execute(man_query,
                            [self.user.text(), self.address.text(),
                             self.city.text(), self.zipcode.text(),
-                            self.company.text(), self.state.text()])
+                            self.company.currentText(), self.state.currentText()])
             connection.commit()
-            functionality_delegator('man-cust')
+            self.close()
+            functionality_delegator('man-cust', self.nav_screen)
     def back_clicked(self):
         self.close()
         self.nav_screen.exec_()
@@ -377,7 +380,7 @@ class man_registration_popup(QDialog):
         self.zipcode = QLineEdit()
         self.company = QComboBox()
         self.line_edits = [self.user, self.password, self.first_name, self.last_name, self.confirm_pass,
-                      self.address, self.city, self.state, self.zipcode, self.company]
+                      self.address, self.city, self.zipcode]
 
         states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
                   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
@@ -450,8 +453,9 @@ class man_registration_popup(QDialog):
         cursor.execute(query, username)
         user = cursor.fetchone()
 
-        check_address_query = 'SELECT * FROM Manager WHERE street = %s;'
-        cursor.execute(check_address_query, self.address.text())
+        check_address_query = 'SELECT * FROM Manager WHERE street = %s and state = %s and city = %s and zipcode = %s;'
+        cursor.execute(check_address_query,
+                       [self.address.text(), self.state.currentText(), self.city.text(), self.zipcode.text()])
         street_address_found = cursor.fetchone()
 
         empty = False
@@ -484,22 +488,23 @@ class man_registration_popup(QDialog):
             cursor.execute(man_query,
                            [self.user.text(), self.address.text(),
                             self.city.text(), self.zipcode.text(),
-                            self.company.text(), self.state.text()])
+                            self.company.currentText(), self.state.currentText()])
             connection.commit()
-            functionality_delegator('manager')
+            self.close()
+            functionality_delegator('manager', self.nav_screen)
 
     def back_clicked(self):
         self.close()
         self.nav_screen.exec_()
 
 
-def functionality_delegator(user_type):
+def functionality_delegator(user_type, nav_screen):
     if user_type == 'user':
-        func_screen = functionality_classes.user_only()
+        func_screen = functionality_classes.user_only(user_register_popup(nav_screen))
     elif user_type == 'manager':
-        func_screen = functionality_classes.manager_only()
+        func_screen = functionality_classes.manager_only(man_registration_popup(nav_screen))
     elif user_type == 'man-cust':
-        func_screen = functionality_classes.manager_customer()
+        func_screen = functionality_classes.manager_customer(man_cust_registration_popup(nav_screen))
     elif user_type == 'customer':
-        func_screen = functionality_classes.customer_only()
+        func_screen = functionality_classes.customer_only(cust_registration_popup(nav_screen))
     func_screen.exec_()
