@@ -150,7 +150,7 @@ DROP PROCEDURE IF EXISTS admin_create_mov;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_mov`(IN i_movName VARCHAR(50), IN i_movDuration INT, IN i_movReleaseDate DATE)
 BEGIN
-        INSERT INTO Movie (releaseDate, name, duration) values (i_movReleaseDate, i_movName, i_movDuration);
+    INSERT INTO Movie (releaseDate, name, duration) values (i_movReleaseDate, i_movName, i_movDuration);
 END$$
 DELIMITER ;
 
