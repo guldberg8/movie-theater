@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `movie_theater`;
 
 CREATE TABLE `movie_theater`.`Company` (
   `companyName` VARCHAR(128) NOT NULL,
-  PRIMARY KEY (`name`)); 
+  PRIMARY KEY (`companyName`)); 
 
 CREATE TABLE `movie_theater`.`User` (
   `username` VARCHAR(128) NOT NULL,
@@ -61,12 +61,12 @@ CREATE TABLE `movie_theater`.`Manager` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk5`
     FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
+    REFERENCES `movie_theater`.`Company` (`companyName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`CreditCard` (
-  `creditCardNum` VARCHAR(12zz) NOT NULL,
+  `creditCardNum` CHAR(16) NOT NULL,
   `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`creditCardNum`),
   CONSTRAINT `fk6`
@@ -83,10 +83,11 @@ CREATE TABLE `movie_theater`.`Theater` (
   `city` VARCHAR(128) NULL,
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
-  PRIMARY KEY (`companyName`, `name`),
+  `capacity` INT NULL,
+  PRIMARY KEY (`companyName`, `theaterName`),
   CONSTRAINT `fk7`
     FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
+    REFERENCES `movie_theater`.`Company` (`companyName`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk8`
@@ -101,7 +102,7 @@ CREATE TABLE `movie_theater`.`Visit` (
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,  
   `username` VARCHAR(128) NOT NULL,
-  PRIMARY KEY (`ID`),
+  PRIMARY KEY (`visitID`),
   CONSTRAINT `fk9`
     FOREIGN KEY (`companyName`,`theaterName`)
     REFERENCES `movie_theater`.`Theater` (`companyName`,`theaterName`)
@@ -119,7 +120,7 @@ CREATE TABLE `movie_theater`.`MoviePlay` (
   `movieReleaseDate` DATE NOT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `playDate` DATE NOT NULL,
-  PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `date`),
+  PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `playDate`),
   CONSTRAINT `fk11`
     FOREIGN KEY (`companyName` , `theaterName`)
     REFERENCES `movie_theater`.`Theater` (`companyName` , `theaterName`)
@@ -127,20 +128,20 @@ CREATE TABLE `movie_theater`.`MoviePlay` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk12`
     FOREIGN KEY (`movieReleaseDate`,`movieName`)
-    REFERENCES `movie_theater`.`Movie` (`releaseDate`,`name`)
+    REFERENCES `movie_theater`.`Movie` (`releaseDate`,`movieName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
 CREATE TABLE `movie_theater`.`Transaction` (
-  `creditCard` CHAR(12) NOT NULL,
+  `creditCardNum` CHAR(16) NOT NULL,
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,
   `movieReleaseDate` DATE NOT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `moviePlayDate` DATE NOT NULL,
-  PRIMARY KEY (`creditCard`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
+  PRIMARY KEY (`creditCardNum`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
   CONSTRAINT `fk13`
-    FOREIGN KEY (`creditCard`)
+    FOREIGN KEY (`creditCardNum`)
     REFERENCES `movie_theater`.`CreditCard` (`creditCardNum`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,

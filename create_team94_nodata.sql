@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `movie_theater`;
+CREATE DATABASE  IF NOT EXISTS `Team94`;
 
-CREATE TABLE `movie_theater`.`Company` (
+CREATE TABLE `Team94`.`Company` (
   `companyName` VARCHAR(128) NOT NULL,
-  PRIMARY KEY (`name`)); 
+  PRIMARY KEY (`companyName`)); 
 
-CREATE TABLE `movie_theater`.`User` (
+CREATE TABLE `Team94`.`User` (
   `username` VARCHAR(128) NOT NULL,
   `status` VARCHAR(128) NULL,
   `password` VARCHAR(128) NOT NULL,
@@ -12,40 +12,40 @@ CREATE TABLE `movie_theater`.`User` (
   `lastName` VARCHAR(128) NULL,
   PRIMARY KEY (`username`));
 
-CREATE TABLE `movie_theater`.`Movie` (
+CREATE TABLE `Team94`.`Movie` (
   `releaseDate` DATE NOT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `duration` VARCHAR(128) NULL,
   PRIMARY KEY (`releaseDate`, `movieName`));
 
-CREATE TABLE `movie_theater`.`Customer` (
+CREATE TABLE `Team94`.`Customer` (
   `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk1`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
+    REFERENCES `Team94`.`User` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Employee` (
+CREATE TABLE `Team94`.`Employee` (
   `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk2`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
+    REFERENCES `Team94`.`User` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Admin` (
+CREATE TABLE `Team94`.`Admin` (
   `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `fk3`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
+    REFERENCES `Team94`.`User` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Manager` (
+CREATE TABLE `Team94`.`Manager` (
   `username` VARCHAR(128) NOT NULL,
   `companyName` VARCHAR(128) NOT NULL,
   `street` VARCHAR(128) NULL,
@@ -56,26 +56,26 @@ CREATE TABLE `movie_theater`.`Manager` (
   UNIQUE INDEX `manager_address_index` (`zipcode` ASC, `state` ASC, `city` ASC, `street` ASC),
   CONSTRAINT `fk4`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
+    REFERENCES `Team94`.`User` (`username`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk5`
     FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
+    REFERENCES `Team94`.`Company` (`companyName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`CreditCard` (
-  `creditCardNum` VARCHAR(12zz) NOT NULL,
+CREATE TABLE `Team94`.`CreditCard` (
+  `creditCardNum` CHAR(16) NOT NULL,
   `username` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`creditCardNum`),
   CONSTRAINT `fk6`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`Customer` (`username`)
+    REFERENCES `Team94`.`Customer` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Theater` (
+CREATE TABLE `Team94`.`Theater` (
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,
   `manager` VARCHAR(128) NOT NULL,
@@ -83,69 +83,70 @@ CREATE TABLE `movie_theater`.`Theater` (
   `city` VARCHAR(128) NULL,
   `state` CHAR(2) NULL,
   `zipcode` CHAR(5) NULL,
-  PRIMARY KEY (`companyName`, `name`),
+  `capacity` INT NULL,
+  PRIMARY KEY (`companyName`, `theaterName`),
   CONSTRAINT `fk7`
     FOREIGN KEY (`companyName`)
-    REFERENCES `movie_theater`.`Company` (`name`)
+    REFERENCES `Team94`.`Company` (`companyName`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk8`
     FOREIGN KEY (`manager`)
-    REFERENCES `movie_theater`.`Manager` (`username`)
+    REFERENCES `Team94`.`Manager` (`username`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Visit` (
+CREATE TABLE `Team94`.`Visit` (
   `visitID`  INT NOT NULL AUTO_INCREMENT,
   `visitDate` DATE NULL,
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,  
   `username` VARCHAR(128) NOT NULL,
-  PRIMARY KEY (`ID`),
+  PRIMARY KEY (`visitID`),
   CONSTRAINT `fk9`
     FOREIGN KEY (`companyName`,`theaterName`)
-    REFERENCES `movie_theater`.`Theater` (`companyName`,`theaterName`)
+    REFERENCES `Team94`.`Theater` (`companyName`,`theaterName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk10`
     FOREIGN KEY (`username`)
-    REFERENCES `movie_theater`.`User` (`username`)
+    REFERENCES `Team94`.`User` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`MoviePlay` (
+CREATE TABLE `Team94`.`MoviePlay` (
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,
   `movieReleaseDate` DATE NOT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `playDate` DATE NOT NULL,
-  PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `date`),
+  PRIMARY KEY (`companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `playDate`),
   CONSTRAINT `fk11`
     FOREIGN KEY (`companyName` , `theaterName`)
-    REFERENCES `movie_theater`.`Theater` (`companyName` , `theaterName`)
+    REFERENCES `Team94`.`Theater` (`companyName` , `theaterName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk12`
     FOREIGN KEY (`movieReleaseDate`,`movieName`)
-    REFERENCES `movie_theater`.`Movie` (`releaseDate`,`name`)
+    REFERENCES `Team94`.`Movie` (`releaseDate`,`movieName`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `movie_theater`.`Transaction` (
-  `creditCard` CHAR(12) NOT NULL,
+CREATE TABLE `Team94`.`Transaction` (
+  `creditCardNum` CHAR(16) NOT NULL,
   `companyName` VARCHAR(128) NOT NULL,
   `theaterName` VARCHAR(128) NOT NULL,
   `movieReleaseDate` DATE NOT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `moviePlayDate` DATE NOT NULL,
-  PRIMARY KEY (`creditCard`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
+  PRIMARY KEY (`creditCardNum`, `companyName`, `theaterName`, `movieReleaseDate`, `movieName`, `moviePlayDate`),
   CONSTRAINT `fk13`
-    FOREIGN KEY (`creditCard`)
-    REFERENCES `movie_theater`.`CreditCard` (`creditCardNum`)
+    FOREIGN KEY (`creditCardNum`)
+    REFERENCES `Team94`.`CreditCard` (`creditCardNum`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk14`
     FOREIGN KEY (`companyName` , `theaterName` , `movieReleaseDate` , `movieName` , `moviePlayDate`)
-    REFERENCES `movie_theater`.`MoviePlay` (`companyName` , `theaterName` , `movieReleaseDate` , `movieName` , `playDate`)
+    REFERENCES `Team94`.`MoviePlay` (`companyName` , `theaterName` , `movieReleaseDate` , `movieName` , `playDate`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
