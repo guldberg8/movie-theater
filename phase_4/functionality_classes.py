@@ -22,10 +22,11 @@ from PyQt5.QtGui import (
     QStandardItem)
 
 class admin_only(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(admin_only, self).__init__()
         self.setWindowTitle("Admin-Only Functionality")
         self.message = QLabel('Admin-Only Functionality')
+        self.login = login
 
         manage_user_button = QPushButton('Manage User')
         manage_company_button = QPushButton('Manage Company')
@@ -59,14 +60,15 @@ class admin_only(QDialog):
 
     def back_clicked(self):
         self.close()
-        UI.DbLoginDialog().exec_()
+        self.login.exec_()
 
 
 class admin_customer(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(admin_customer, self).__init__()
         self.setWindowTitle("Admin-Customer Functionality")
         self.message = QLabel('Admin-Customer Functionality')
+        self.login = login
 
         manage_user_button = QPushButton('Manage User')
         manage_company_button = QPushButton('Manage Company')
@@ -120,7 +122,7 @@ class admin_customer(QDialog):
 
     def back_clicked(self):
         self.close()
-        UI.DbLoginDialog().exec_()
+        self.login.exec_()
 
     def explore_clicked(self):
         explore = cust_func.explore()
@@ -139,10 +141,11 @@ class admin_customer(QDialog):
         view_hist.exec_()
 
 class manager_only(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(manager_only, self).__init__()
         self.setWindowTitle("Manager-Only Functionality")
         self.message = QLabel('Manager-Only Functionality')
+        self.login = login
 
 
         vbox = QVBoxLayout()
@@ -151,10 +154,11 @@ class manager_only(QDialog):
 
 
 class manager_customer(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(manager_customer, self).__init__()
         self.setWindowTitle("Manager-Customer Functionality")
         self.message = QLabel('Manager-Customer Functionality')
+        self.login = login
 
 
         vbox = QVBoxLayout()
@@ -163,10 +167,11 @@ class manager_customer(QDialog):
 
 
 class customer_only(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(customer_only, self).__init__()
         self.setWindowTitle("Customer Functionality")
         self.message = QLabel('Customer Functionality')
+        self.login = login
 
 
         vbox = QVBoxLayout()
@@ -174,10 +179,11 @@ class customer_only(QDialog):
         self.setLayout(vbox)
 
 class user_only(QDialog):
-    def __init__(self):
+    def __init__(self, login):
         super(user_only, self).__init__()
         self.setWindowTitle("User Functionality")
         self.message = QLabel('User Functionality')
+        self.login = login
 
         vbox = QVBoxLayout()
         vbox.addWidget(self.message)

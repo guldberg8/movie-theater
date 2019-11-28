@@ -200,7 +200,7 @@ def functionality_delegator(username):
     cursor.execute(query, username)
     emp = cursor.fetchone()
 
-    if emp == None:
+    if not emp:
         account_type = 'Customer'
     else:
         query = 'SELECT * FROM Manager WHERE username = %s;'
@@ -213,22 +213,22 @@ def functionality_delegator(username):
         account_type = f'{emp_type}, Customer'
 
     if account_type == 'Admin':
-        admin_only_object = functionality_classes().admin_only()
+        admin_only_object = functionality_classes.admin_only(login)
         admin_only_object.exec()
     elif 'Admin' in account_type and 'Customer' in account_type:
-        admin_customer_object = functionality_classes.admin_customer()
+        admin_customer_object = functionality_classes.admin_customer(login)
         admin_customer_object.exec()
     elif account_type == 'Manager':
-        manager_only_object = functionality_classes.manager_only()
+        manager_only_object = functionality_classes.manager_only(login)
         manager_only_object.exec()
     elif 'Manager' in account_type and 'Customer' in account_type:
-        manager_customer_object = functionality_classes.manager_customer()
+        manager_customer_object = functionality_classes.manager_customer(login)
         manager_customer_object.exec()
     elif account_type == 'Customer':
-        customer_only_object = functionality_classes.customer_only()
+        customer_only_object = functionality_classes.customer_only(login)
         customer_only_object.exec()
     elif account_type == 'User':
-        user_only_object = functionality_classes.user_only()
+        user_only_object = functionality_classes.user_only(login)
         user_only_object.exec()
 
 
