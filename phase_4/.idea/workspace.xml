@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ce322d84-0df7-43b2-95a2-10d7c3fa2417" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/UI.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin_func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functionality_classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/functionality_classes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manager_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/manager_func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/registration_classes.py" afterDir="false" />
-    </list>
+    <list default="true" id="ce322d84-0df7-43b2-95a2-10d7c3fa2417" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +116,7 @@
       <option name="presentableId" value="Default" />
       <updated>1573485539706</updated>
       <workItem from="1573485549247" duration="16938000" />
-      <workItem from="1574730977025" duration="24381000" />
+      <workItem from="1574730977025" duration="24766000" />
     </task>
     <task id="LOCAL-00001" summary="'Modified to account for no password'">
       <created>1573584172233</created>
@@ -152,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574911091262</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Updated functionality">
+      <created>1574979407330</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1574979407330</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,10 +178,11 @@
     <MESSAGE value="Added branchs" />
     <MESSAGE value="Added UI register and functionality" />
     <MESSAGE value="Updated UI" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated UI" />
+    <MESSAGE value="Updated functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated functionality" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/phase_4$UI.coverage" NAME="UI Coverage Results" MODIFIED="1574978762047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/phase_4$UI.coverage" NAME="UI Coverage Results" MODIFIED="1574979416724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/phase_4$import_theater.coverage" NAME="import_theater Coverage Results" MODIFIED="1573581474044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
