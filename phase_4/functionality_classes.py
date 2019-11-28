@@ -46,13 +46,16 @@ class admin_only(QDialog):
         self.setLayout(vbox)
 
     def man_user_clicked(self):
-        print('man user')
+        manage_user = admin_func.manage_user()
+        manage_user.exec_()
 
     def man_comp_clicked(self):
-        print('man cust')
+        manage_cust = admin_func.manage_comp()
+        manage_cust.exec_()
 
     def create_movie_clicked(self):
-        print('Create movie')
+        create_movie = admin_func.create_movie()
+        create_movie.exec_()
 
     def back_clicked(self):
         self.close()

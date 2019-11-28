@@ -93,10 +93,7 @@ class DbLoginDialog(QDialog):
         cursor.execute(query, self.user.text())
         user_data = cursor.fetchone()
         # If username already in database
-        if not user_data or self.user.text() == '':
-            self.register()
-        else:
-            self.user_exists()
+        self.register()
 
     def user_exists(self):
         user_exists = existing_user_popup(self.user.text())
