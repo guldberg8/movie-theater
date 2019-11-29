@@ -85,7 +85,6 @@ class theater_overview(QDialog):
         filter_button.clicked.connect(self.filter_clicked)
         filter_button.setDefault(True)
 
-        table = QTableWidget()
         connection = UI.connection
         cursor = connection.cursor()
         query = 'SELECT * FROM Movie where movName LIKE %s and duration between %s and %s' \
@@ -94,10 +93,24 @@ class theater_overview(QDialog):
                        [f'%{entered_movie_name}%',
                        entered_movie_duration[0],
                        entered_movie_duration[1],
-                       f'{entered_movie_rel_date[0]}',
-                        f'{entered_movie_rel_date[1]}'])
+                       entered_movie_rel_date[0],
+                        entered_movie_rel_date[1]])
+        print(entered_movie_rel_date)
         movies = cursor.fetchall()
-        print(movies)
+        release_date = []
+        names = []
+        duration = []
+        for movie in movies:
+            release_date.append(movie['movReleaseDate'])
+            names.append(movie['movName'])
+            duration.append(movie['duration'])
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(['Movie Name', 'Duration', 'Release Date', 'Play Date'])
+        for i in range(len(movies)):
+            model.appendRow([QStandardItem(names[i]), QStandardItem(duration[i]), QStandardItem(str(release_date[i]))])
+
+        table = QTableView()
+        table.setModel(model)
 
 
         vbox.addItem(row1)
@@ -134,14 +147,20 @@ class theater_overview(QDialog):
         if self.movie_duration_start.text() != '':
             dur_start = int(self.movie_duration_start.text())
         else:
-            dur_start = ''
+            dur_start = 0
         if self.movie_duration_end.text() != '':
             dur_end = int(self.movie_duration_end.text())
         else:
-            dur_end = ''
+            dur_end = 1000000
+        if self.rel_start.text() == '':
+            self.rel_start.setText('1500-01-01')
+        if self.rel_end.text() == '':
+            self.rel_end.setText(date.today().__str__())
+
         theater_over = theater_overview(self.back_screen,
                                         entered_movie_name=self.movie_name.text(),
-                                        entered_movie_duration=[dur_start, dur_end])
+                                        entered_movie_duration=[dur_start, dur_end],
+                                        entered_movie_rel_date=[self.rel_start.text(), self.rel_end.text()])
         theater_over.exec_()
 
 
