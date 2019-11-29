@@ -69,8 +69,12 @@ BEGIN
 	SELECT username, status, isCustomer, isAdmin, isManager
 	FROM User
 <<<<<<< HEAD
+<<<<<<< HEAD
     WHERE (username = i_username) AND (password = i_password)
 =======
+=======
+    WHERE (username = i_username) AND (password = i_password)
+>>>>>>> committing
 END$$
 DELIMITER ;
 
