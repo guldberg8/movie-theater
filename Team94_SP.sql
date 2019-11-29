@@ -100,9 +100,7 @@ DELIMITER ;
 #!
 DROP PROCEDURE IF EXISTS admin_filter_user;
 DELIMITER $$
-CREATE PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status, IN i_sortBy, IN i_sortDirection)
-BEGIN
-        CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status VARCHAR(10), IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status VARCHAR(10), IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
 BEGIN
     DROP VIEW IF EXISTS `AdFilterUserView`; 
     CREATE VIEW `AdFilterUserView` AS 
