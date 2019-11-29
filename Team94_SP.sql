@@ -131,7 +131,13 @@ DROP PROCEDURE IF EXISTS admin_view_comDetail_emp;
 DELIMITER $$
 CREATE PROCEDURE `admin_view_comDetail_emp`(IN i_comName VARCHAR(50))
 BEGIN
-
+    DROP TABLE IF EXISTS AdComDetailEmp
+    CREATE TABLE AdComDetailEmp
+    SELECT firstName, lastName
+    FROM Manager
+    Join User
+    ON Manager.username = User.username
+    WHERE companyName = i_comName
 END$$
 DELIMITER ;
 
@@ -140,7 +146,11 @@ DROP PROCEDURE IF EXISTS admin_view_comDetail_th;
 DELIMITER $$
 CREATE PROCEDURE `admin_view_comDetail_th`(IN i_comName VARCHAR(50))
 BEGIN
-
+    DROP TABLE IF EXISTS AdComDetailTh
+    CREATE TABLE AdComDetailTh
+    SELECT theaterName, managerUsername, city, state, capacity
+    FROM Theater
+    WHERE companyName = i_comName
 END$$
 DELIMITER ;
 
@@ -178,7 +188,12 @@ DROP PROCEDURE IF EXISTS customer_filter_mov;
 DELIMITER $$
 CREATE PROCEDURE `customer_filter_mov`(IN i_movName VARCHAR(50), IN i_comName VARCHAR(50), IN i_city VARCHAR(50), IN i_state VARCHAR(3), IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE)
 BEGIN
-
+    DROP TABLE IF EXISTS CosViewHistory
+    CREATE TABLE CosViewHistory
+    SELECT movieName, theaterName, companyName, creditCard, date
+    FROM Transaction
+    NATURAL JOIN CreditCard
+    WHERE username = i_username
 END$$
 DELIMITER ;
 
