@@ -252,7 +252,7 @@ DROP PROCEDURE IF EXISTS manager_schedule_mov;
 DELIMITER $$
 CREATE PROCEDURE `manager_schedule_mov`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_movPlayDate DATE)
 BEGIN
-
+    INSERT INTO MoviePlay (companyName, theaterName, movieReleaseDate, movieName, playDate) values ((SELECT companyName FROM Theater WHERE managerUsername = i_manUsername), (SELECT theaterName FROM Theater WHERE managerUsername = i_manUsername), i_movReleaseDate, i_movName, i_movPlayDate);
 END$$
 DELIMITER ;
 
