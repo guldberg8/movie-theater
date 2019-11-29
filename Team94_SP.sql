@@ -119,8 +119,7 @@ BEGIN
     LEFT JOIN Manager ON User.username = Manager.username
     LEFT JOIN Customer ON User.username = Customer.username
     GROUP BY User.username;
-    
-  
+      
     SELECT *
     FROM AdFilterUserView
     WHERE username = CASE
