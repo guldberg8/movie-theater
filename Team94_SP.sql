@@ -119,8 +119,7 @@ BEGIN
     LEFT JOIN Manager ON User.username = Manager.username
     LEFT JOIN Customer ON User.username = Customer.username
     GROUP BY User.username;
-    
-  
+      
     SELECT *
     FROM AdFilterUserView
     WHERE username = CASE
@@ -147,12 +146,48 @@ DELIMITER ;
 
 #Screen 14
 #!
-DROP PROCEDURE IF EXISTS admin_filter_company;
-DELIMITER $$
-CREATE PROCEDURE `admin_filter_company`(IN i_comName VARCHAR(50), IN i_minCity INT, IN i_minTheater INT, IN i_maxTheater INT, IN i_minEmployee INT, IN i_maxEmployee INT, IN i_sortBy, IN i_sortDirection)
-BEGIN
+DROP procedure IF EXISTS `admin_filter_company`;
 
+DELIMITER $$
+USE `Team94`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_company`(IN i_comName VARCHAR(50), IN i_minCity INT, IN i_maxCity INT, IN i_minTheater INT, IN i_maxTheater INT, IN i_minEmployee INT, IN i_maxEmployee INT, IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
+BEGIN
+    DROP VIEW IF EXISTS `AdFilterComView`; 
+    CREATE VIEW `AdFilterComView` AS 
+    SELECT
+        Company.companyName as comName,
+        COUNT(DISTINCT Theater.city) as numCityCover,
+        COUNT(DISTINCT Theater.theaterName) As numTheater,
+        COUNT(DISTINCT Manager.username) as numEmployee
+    FROM
+        Company
+    LEFT JOIN Theater ON Company.companyName = Theater.companyName
+    LEFT JOIN Manager ON Company.companyName = Manager.companyName
+    GROUP BY Company.companyName;
+    
+    SELECT *
+    FROM AdFilterComView
+    WHERE comName = CASE
+        WHEN LENGTH(i_comName) > 0 THEN  i_comName 
+        ELSE comName
+        END
+    AND
+        numCityCover BETWEEN i_minCity and i_maxCity
+    AND
+        numTheater BETWEEN i_minTheater and i_maxTheater
+    AND
+        numEmployee BETWEEN i_minEmployee and i_maxEmployee
+    ORDER BY 
+        (CASE WHEN (i_sortBy='numCityCover') AND (i_sortDirection='ASC') THEN numCityCover END) ASC,
+        (CASE WHEN (i_sortBy='numCityCover') THEN numCityCover END) DESC,
+        (CASE WHEN (i_sortBy='numTheater') AND (i_sortDirection='ASC') THEN numTheater END) ASC,
+        (CASE WHEN (i_sortBy='numTheater') THEN numTheater END) DESC,
+        (CASE WHEN (i_sortBy='numEmployee') AND (i_sortDirection='ASC') THEN numEmployee END) ASC,
+        (CASE WHEN (i_sortBy='numEmployee') THEN numEmployee END) DESC,
+        (CASE WHEN (i_sortDirection='ASC') THEN comName END) ASC,
+        comName DESC;
 END$$
+
 DELIMITER ;
 
 #Screen 15
