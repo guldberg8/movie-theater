@@ -102,7 +102,48 @@ DROP PROCEDURE IF EXISTS admin_filter_user;
 DELIMITER $$
 CREATE PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status, IN i_sortBy, IN i_sortDirection)
 BEGIN
-        #do all view and filter reuire separate tables?
+        CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status VARCHAR(10), IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
+BEGIN
+    DROP VIEW IF EXISTS `AdFilterUserView`; 
+    CREATE VIEW `AdFilterUserView` AS 
+    SELECT
+        User.username,
+        COUNT(CreditCard.creditCardNum) As creditCardCount,
+        IF(Admin.username IS NULL, IF(Manager.username IS NULL,
+        IF(Customer.username IS NULL, CONVERT("User",CHAR), CONVERT("Customer",CHAR)),
+        IF(Customer.username IS NULL, CONVERT("Manager",CHAR), CONVERT("CustomerManager",CHAR))),
+        IF(Customer.username IS NULL, CONVERT("Admin",CHAR), CONVERT("CustomerAdmin",CHAR))) As userType,
+        User.status
+    FROM
+        User
+    LEFT JOIN CreditCard ON User.username = CreditCard.username
+    LEFT JOIN Admin ON User.username = Admin.username
+    LEFT JOIN Manager ON User.username = Manager.username
+    LEFT JOIN Customer ON User.username = Customer.username
+    GROUP BY User.username;
+    
+  
+    SELECT *
+    FROM AdFilterUserView
+    WHERE username = CASE
+        WHEN LENGTH(i_username) > 0 THEN  i_username 
+        ELSE username
+        END
+    AND
+        status = CASE
+        WHEN i_status='ALL' then status
+        WHEN LENGTH(i_status) > 0 THEN i_status
+        ELSE status
+        END
+    ORDER BY 
+        (CASE WHEN (i_sortBy='creditCardCount') AND (i_sortDirection='ASC') THEN creditCardCount END) ASC,
+        (CASE WHEN (i_sortBy='creditCardCount') THEN creditCardCount END) DESC,
+        (CASE WHEN (i_sortBy='userType') AND (i_sortDirection='ASC') THEN userType END) ASC,
+        (CASE WHEN (i_sortBy='userType') THEN userType END) DESC,
+        (CASE WHEN (i_sortBy='status') AND (i_sortDirection='ASC') THEN status END) ASC,
+        (CASE WHEN (i_sortBy='status') THEN status END) DESC,
+        username DESC;
+END
 END$$
 DELIMITER ;
 
