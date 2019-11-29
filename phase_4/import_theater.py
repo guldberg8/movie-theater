@@ -4,7 +4,7 @@ import pandas as pd
 # To populate database: python import_theater.py <xlsx_file>.xlsx root <sql_password>
 
 def get_sheets():
-    #sheets are in this specific order to preserver foreign key integrity
+    #sheets are in this specific order to preserve foreign key integrity
     sheets = ['Company',
                 'Users',
                 'Movie',
