@@ -39,8 +39,8 @@ connection = pymysql.connect(host='localhost',
 test = True
 
 if test:
-    test_user = 'cool_class4400'
-    test_pass = '333333333'
+    test_user = 'manager1'
+    test_pass = '1122112211'
 else:
     test_user = ''
     test_pass = ''
