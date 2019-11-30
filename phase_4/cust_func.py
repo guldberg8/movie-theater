@@ -67,7 +67,7 @@ class explore(QDialog):
         self.b1 = QPushButton("Filter")
         row4.addWidget(self.b1)
 
-        row5. 
+
         #chart here
 
         self.b2 = QPushButton("Back")
