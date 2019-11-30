@@ -100,7 +100,7 @@ DELIMITER ;
 #!
 DROP PROCEDURE IF EXISTS admin_filter_user;
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status VARCHAR(10), IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
+CREATE PROCEDURE `admin_filter_user`(IN i_username VARCHAR(50), IN i_status VARCHAR(10), IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
 BEGIN
     DROP VIEW IF EXISTS `AdFilterUserView`; 
     CREATE VIEW `AdFilterUserView` AS 
@@ -150,7 +150,7 @@ DROP procedure IF EXISTS `admin_filter_company`;
 
 DELIMITER $$
 USE `Team94`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `admin_filter_company`(IN i_comName VARCHAR(50), IN i_minCity INT, IN i_maxCity INT, IN i_minTheater INT, IN i_maxTheater INT, IN i_minEmployee INT, IN i_maxEmployee INT, IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
+CREATE PROCEDURE `admin_filter_company`(IN i_comName VARCHAR(50), IN i_minCity INT, IN i_maxCity INT, IN i_minTheater INT, IN i_maxTheater INT, IN i_minEmployee INT, IN i_maxEmployee INT, IN i_sortBy VARCHAR(20), IN i_sortDirection VARCHAR(4))
 BEGIN
     DROP VIEW IF EXISTS `AdFilterComView`; 
     CREATE VIEW `AdFilterComView` AS 
@@ -239,11 +239,43 @@ END$$
 DELIMITER ;
 
 #Screen 18
-DROP PROCEDURE IF EXISTS manager_filter_th;
-DELIMITER $$
-CREATE PROCEDURE `manager_filter_th`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_minMovDuration INT, IN i_maxMovDuration INT, IN i_minMovReleaseDate DATE, IN maxMovReleaseDate DATE, IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE, IN i_includeNotPlayed BOOLEAN)
-BEGIN
+DROP procedure IF EXISTS `manager_filter_th`;
 
+DELIMITER $$
+CREATE PROCEDURE `manager_filter_th`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_minMovDuration INT, IN i_maxMovDuration INT, IN i_minMovReleaseDate DATE, IN i_maxMovReleaseDate DATE, IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE, IN i_includeNotPlayed BOOLEAN)
+BEGIN
+    DROP VIEW IF EXISTS `ManagerFilterThView`; 
+    CREATE VIEW `ManagerFilterThView` AS 
+    SELECT
+        Movie.movieName as movName,
+        Movie.duration as movDuration,
+        Movie.releaseDate as movReleaseDate,
+        MoviePlay.playDate as movPlayDate,
+        Theater.manager as manUsername
+    FROM
+        Movie
+    LEFT JOIN MoviePlay ON Movie.movieName = MoviePlay.movieName
+    LEFT JOIN Theater ON MoviePlay.theaterName = Theater.theaterName;
+    
+    SELECT movName, movDuration, movReleaseDate, movPlayDate
+    FROM ManagerFilterThView
+    WHERE manUsername = CASE
+        WHEN LENGTH(i_manUsername) > 0 THEN  i_manUsername 
+        ELSE manUsername
+        END
+    AND
+        movName = CASE
+        WHEN LENGTH(i_movName) > 0 THEN  i_movName
+        ELSE movName
+        END
+    AND
+        movDuration BETWEEN i_minMovDuration and i_maxMovDuration
+    AND
+        movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate
+    AND
+        movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate
+    AND
+        CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate) END;
 END$$
 DELIMITER ;
 
@@ -283,14 +315,31 @@ DELIMITER ;
 
 
 #Screen 21
-DROP PROCEDURE IF EXISTS customer_view_history;
+DROP procedure IF EXISTS `customer_view_history`;
 DELIMITER $$
 CREATE PROCEDURE `customer_view_history`(IN i_cusUsername VARCHAR(50))
 BEGIN
-
+    DROP VIEW IF EXISTS `CosViewHistoryView`; 
+    CREATE VIEW `CosViewHistoryView` AS 
+    SELECT
+        Transaction.movieName as movName,
+        Transaction.theaterName as thName,
+        Transaction.companyName as comName,
+        Transaction.creditCardNum as creditCarNum,
+        Transaction.moviePlayDate as movPlayDate,
+        CreditCard.username username
+    FROM
+        Transaction
+    LEFT JOIN CreditCard ON Transaction.creditCardNum = CreditCard.creditCardNum;
+    
+    SELECT *
+    FROM CosViewHistoryView
+    WHERE username = CASE
+        WHEN LENGTH(i_cusUsername) > 0 THEN  i_cusUsername 
+        ELSE username
+        END;
 END$$
 DELIMITER ;
-
 
 #Screen 22
 DROP PROCEDURE IF EXISTS user_filter_th;
