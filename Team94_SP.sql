@@ -120,6 +120,8 @@ BEGIN
     LEFT JOIN Customer ON User.username = Customer.username
     GROUP BY User.username;
       
+    DROP TABLE IF EXISTS `AdFilterUser`
+    CREATE TABLE `AdFilterUser` AS
     SELECT *
     FROM AdFilterUserView
     WHERE username = CASE
@@ -165,6 +167,8 @@ BEGIN
     LEFT JOIN Manager ON Company.companyName = Manager.companyName
     GROUP BY Company.companyName;
     
+    DROP TABLE IF EXISTS `AdFilterCom`
+    CREATE TABLE `AdFilterCom` AS
     SELECT *
     FROM AdFilterComView
     WHERE comName = CASE
@@ -257,6 +261,8 @@ BEGIN
     LEFT JOIN MoviePlay ON Movie.movieName = MoviePlay.movieName
     LEFT JOIN Theater ON MoviePlay.theaterName = Theater.theaterName;
     
+    DROP TABLE IF EXISTS `ManagerFilterTh`
+    CREATE TABLE `ManagerFilterTh` AS
     SELECT movName, movDuration, movReleaseDate, movPlayDate
     FROM ManagerFilterThView
     WHERE manUsername = CASE
@@ -295,7 +301,7 @@ DELIMITER $$
 CREATE PROCEDURE `customer_filter_mov`(IN i_movName VARCHAR(50), IN i_comName VARCHAR(50), IN i_city VARCHAR(50), IN i_state VARCHAR(3), IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE)
 BEGIN
     DROP TABLE IF EXISTS CosViewHistory
-    CREATE TABLE CosViewHistory
+    CREATE TABLE CosViewHistory AS
     SELECT movieName, theaterName, companyName, creditCard, date
     FROM Transaction
     NATURAL JOIN CreditCard
@@ -347,7 +353,7 @@ DELIMITER $$
 CREATE PROCEDURE `user_filter_th`(IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_city VARCHAR(50), IN i_state VARCHAR(3))
 BEGIN
     DROP TABLE IF EXISTS UserFilterTh;
-    CREATE TABLE UserFilterTh
+    CREATE TABLE UserFilterTh AS
     SELECT thName, thStreet, thCity, thState, thZipcode, comName
     FROM Theater
     WHERE
@@ -378,7 +384,7 @@ DELIMITER $$
 CREATE PROCEDURE `user_filter_visitHistory`(IN i_username VARCHAR(50), IN i_minVisitDate DATE, IN i_maxVisitDate DATE)
 BEGIN
     DROP TABLE IF EXISTS UserVisitHistory;
-    CREATE TABLE UserVisitHistory
+    CREATE TABLE UserVisitHistory AS
     SELECT thName, thStreet, thCity, thState, thZipcode, comName, visitDate
     FROM UserVisitTheater
         NATURAL JOIN
