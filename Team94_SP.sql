@@ -131,8 +131,8 @@ BEGIN
     SELECT *
     FROM AdFilterUserView
     WHERE
-		(username = i_username) OR (username = '') AND
-        (status = i_status) OR (status = 'ALL') OR (status = '')
+		(username = i_username) OR (username = "") AND
+        (status = i_status) OR (status = "ALL") OR (status = "")
     ORDER BY 
         (CASE WHEN (i_sortBy='creditCardCount') AND (i_sortDirection='ASC') THEN creditCardCount END) ASC,
         (CASE WHEN (i_sortBy='creditCardCount') THEN creditCardCount END) DESC,
@@ -167,13 +167,13 @@ BEGIN
     SELECT *
     FROM AdFilterComView
     WHERE 
-		(comName = i_comName OR i_comName = '' OR i_comName = 'ALL') AND
-        (numCityCover is NULL OR numCityCover>=i_minCity) AND
-        (numCityCover is NULL OR numCityCover<=i_maxCity) AND
-        (numTheater is NULL OR numTheater >= i_minTheater) AND
-        (numTheater is NULL OR numTheater <= i_maxTheater) AND
-		(numEmployee is NULL OR numEmployee >= i_minEmployee) AND
-        (numEmployee is NULL OR numEmployee <= i_maxEmployee)
+		(comName = i_comName OR i_comName = "" OR i_comName = "ALL") AND
+        (i_minCity is NULL OR numCityCover>=i_minCity) AND
+        (i_maxCity is NULL OR numCityCover<=i_maxCity) AND
+        (i_minTheater is NULL OR numTheater >= i_minTheater) AND
+        (i_maxTheater is NULL OR numTheater <= i_maxTheater) AND
+		(i_minEmployee is NULL OR numEmployee >= i_minEmployee) AND
+        (i_maxEmployee is NULL OR numEmployee <= i_maxEmployee)
     ORDER BY 
         (CASE WHEN (i_sortBy='numCityCover') AND (i_sortDirection='ASC') THEN numCityCover END) ASC,
         (CASE WHEN (i_sortBy='numCityCover') THEN numCityCover END) DESC,
@@ -207,7 +207,7 @@ BEGIN
     FROM Manager
     Join User
     ON Manager.username = User.username
-    WHERE (companyName = i_comName OR i_comName = '');
+    WHERE (companyName = i_comName OR i_comName = "");
 END$$
 DELIMITER ;
 
@@ -257,8 +257,8 @@ BEGIN
     SELECT movName, movDuration, movReleaseDate, movPlayDate
     FROM ManagerFilterThView
     WHERE 
-		(manUsername = i_manUsername OR i_manUsername = '') AND
-        (movName = i_movName OR i_movName = '') AND
+		(manUsername = i_manUsername OR i_manUsername = "") AND
+        (movName = i_movName OR i_movName = "") AND
         (movDuration is NULL OR (movDuration BETWEEN i_minMovDuration and i_maxMovDuration)) AND
         (movReleaseDate is NULL OR (movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate)) AND
         (movPlayDate is NULL OR movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate)) AND
@@ -296,10 +296,10 @@ BEGIN
     FROM MoviePlay
     LEFT JOIN Theater ON MoviePlay.theaterName = Theater.theaterName
     WHERE 
-		(movieName = i_movName OR i_movName = '') AND
-        (MoviePlay.companyName = i_comName OR i_comName = '') AND
-        (city = i_city OR i_city = '') AND
-        (state = i_state OR i_state = '') AND
+		(movieName = i_movName OR i_movName = "") AND
+        (MoviePlay.companyName = i_comName OR i_comName = "") AND
+        (city = i_city OR i_city = "") AND
+        (state = i_state OR i_state = "") AND
         ((playDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate) OR 
         (i_minMovPlayDate is NULL) OR
         (i_maxMovPlayDate is NULL));
@@ -334,7 +334,7 @@ BEGIN
     FROM
         Transaction
     LEFT JOIN CreditCard ON Transaction.creditCardNum = CreditCard.creditCardNum
-    WHERE (CreditCard.username = i_cusUsername OR i_cusUsername = '');
+    WHERE (CreditCard.username = i_cusUsername OR i_cusUsername = "");
 END$$
 DELIMITER ;
 
