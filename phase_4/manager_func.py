@@ -1,5 +1,5 @@
 import sys, pymysql, registration_classes, UI, functionality_classes
-from datetime import date
+from datetime import date, datetime as dt
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (
     QApplication,
@@ -102,10 +102,8 @@ class theater_overview(QDialog):
         user = self.login.user.text()
         cursor.execute(query, user)
         manager = cursor.fetchone()
-        company = manager['companyName']
-        theater = manager['theaterName']
-        print(company)
-        print(theater)
+        self.company = manager['companyName']
+        self.theater = manager['theaterName']
 
 
         release_date = []
@@ -260,17 +258,93 @@ class myCal4(QDialog):
         self.closed_screen.play_end.setText(self.selection)
         self.close()
 
+class myCal5(QDialog):
+    def __init__(self, man_screen, closed_screen):
+        super(myCal5, self).__init__()
+        self.last_screen = man_screen
+        self.closed_screen = closed_screen
+        self.cal = QCalendarWidget(self)
+        self.cal.setGridVisible(True)
+        self.cal.clicked.connect(self.showDate)
+
+        self.calendarWindow = QWidget()
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.cal)
+        self.setLayout(hbox)
+        self.setWindowTitle("Calender Selection")
+
+    def showDate(self):
+        self.date = self.cal.selectedDate()
+        self.selection = self.date.toString("yyyy/MM/dd")
+        self.closed_screen.rel_date.setText(self.selection)
+        self.close()
+
+class myCal6(QDialog):
+    def __init__(self, man_screen, closed_screen):
+        super(myCal6, self).__init__()
+        self.last_screen = man_screen
+        self.closed_screen = closed_screen
+        self.cal = QCalendarWidget(self)
+        self.cal.setGridVisible(True)
+        self.cal.clicked.connect(self.showDate)
+
+        self.calendarWindow = QWidget()
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.cal)
+        self.setLayout(hbox)
+        self.setWindowTitle("Calender Selection")
+
+    def showDate(self):
+        self.date = self.cal.selectedDate()
+        self.selection = self.date.toString("yyyy/MM/dd")
+        self.closed_screen.play_date.setText(self.selection)
+        self.close()
+
 
 class schedule_movie(QDialog):
-    def __init__(self, man_screen):
+    def __init__(self, man_screen, login):
         super(schedule_movie, self).__init__()
         self.setWindowTitle("Schedule Movie")
         self.back_screen = man_screen
+        self.name_dropdown = QComboBox()
+        self.rel_date = QLineEdit()
+        self.play_date = QLineEdit()
+        self.add_button = QPushButton('Add')
+        self.cal1_button = QPushButton('Cal')
+        self.cal2_button = QPushButton('Cal')
+        self.login = login
+
+        self.cal1_button.clicked.connect(self.open_cal1)
+        self.cal2_button.clicked.connect(self.open_cal2)
+        self.add_button.clicked.connect(self.add_clicked)
+
+        connection = UI.connection
+        cursor = connection.cursor()
+        query = 'SELECT * FROM Movie;'
+        cursor.execute(query)
+        movies = cursor.fetchall()
+        for movie in movies:
+            self.name_dropdown.addItem(movie['movName'])
 
         vbox = QVBoxLayout()
+        row1 =QHBoxLayout()
+        row2 = QHBoxLayout()
+        row3 = QHBoxLayout()
+        row1.addWidget(QLabel('Name'))
+        row1.addWidget(self.name_dropdown)
+        row1.addWidget(QLabel('Release Date'))
+        row1.addWidget(self.rel_date)
+        row1.addWidget(self.cal1_button)
+        row2.addWidget(QLabel('Play Date'))
+        row2.addWidget(self.play_date)
+        row2.addWidget(self.cal2_button)
         back_button = QPushButton('Back')
         back_button.clicked.connect(self.back_clicked)
-
+        row3.addWidget(back_button)
+        row3.addWidget(self.add_button)
+        vbox.addItem(row1)
+        vbox.addItem(row2)
+        vbox.addItem(row3)
         vbox.addWidget(back_button)
         self.setLayout(vbox)
 
@@ -278,3 +352,87 @@ class schedule_movie(QDialog):
     def back_clicked(self):
         self.close()
         self.back_screen.exec_()
+
+    def open_cal1(self):
+        cal = myCal5(self.back_screen, self)
+        cal.exec_()
+
+    def open_cal2(self):
+        cal = myCal6(self.back_screen, self)
+        cal.exec_()
+
+    def add_clicked(self):
+        try:
+            play_date = dt.strptime(self.play_date.text(), '%Y/%m/%d')
+            rel_date = dt.strptime(self.rel_date.text(), '%Y/%m/%d')
+        except:
+            error = fill_out_all_fields()
+            error.exec_()
+        connection = UI.connection
+        cursor = connection.cursor()
+        query = 'SELECT * FROM Movie where movName = %s and movReleaseDate = %s;'
+        cursor.execute(query, [self.name_dropdown.currentText(), self.rel_date.text()])
+        movies = cursor.fetchall()
+
+        if play_date < rel_date:
+            before = play_before_release()
+            before.exec_()
+        elif not movies:
+            dne = movie_does_not_exist()
+            dne.exec_()
+        else:
+            query = 'SELECT * FROM Manager where username = %s'
+            user = self.login.user.text()
+            cursor.execute(query, user)
+            manager = cursor.fetchone()
+            self.company = manager['companyName']
+            self.theater = manager['theaterName']
+            if not self.theater:
+                self.theater = 'test'
+
+            query = 'INSERT into MoviePlay (theaterName, companyName, movieReleaseDate, movieName, date) values (%s, %s, %s, %s, %s)'
+            cursor.execute(query, [self.theater, self.company, self.rel_date.text(), self.name_dropdown.currentText(), self.play_date.text()])
+            connection.commit()
+            self.close()
+
+class movie_does_not_exist(QDialog):
+    def __init__(self):
+        super(movie_does_not_exist, self).__init__()
+        self.setWindowTitle("Movie Not Found")
+        vbox = QVBoxLayout()
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_pressed)
+        vbox.addWidget(QLabel('Movie Not Found. Please try again.'))
+        vbox.addWidget(back_button)
+        self.setLayout(vbox)
+
+    def back_pressed(self):
+        self.close()
+
+class play_before_release(QDialog):
+    def __init__(self):
+        super(play_before_release, self).__init__()
+        self.setWindowTitle("Movie Date Incorrect")
+        vbox = QVBoxLayout()
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_pressed)
+        vbox.addWidget(QLabel('Movie Cannot Play Before Release Date.'))
+        vbox.addWidget(back_button)
+        self.setLayout(vbox)
+
+    def back_pressed(self):
+        self.close()
+
+class fill_out_all_fields(QDialog):
+    def __init__(self):
+        super(fill_out_all_fields, self).__init__()
+        self.setWindowTitle("Fields Not Complete")
+        vbox = QVBoxLayout()
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_pressed)
+        vbox.addWidget(QLabel('Please Fill Out All Fields'))
+        vbox.addWidget(back_button)
+        self.setLayout(vbox)
+
+    def back_pressed(self):
+        self.close()

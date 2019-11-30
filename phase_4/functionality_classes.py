@@ -171,7 +171,7 @@ class manager_only(QDialog):
         theater_overview.exec_()
 
     def schedule_movie_clicked(self):
-        schedule_movie = manager_func.schedule_movie(self)
+        schedule_movie = manager_func.schedule_movie(self, self.login)
         schedule_movie.exec_()
 
     def back_clicked(self):
@@ -222,11 +222,11 @@ class manager_customer(QDialog):
         self.setLayout(vbox)
 
     def theater_overview_clicked(self):
-        manage_user = manager_func.theater_overview(self)
+        manage_user = manager_func.theater_overview(self, self.login)
         manage_user.exec_()
 
     def sched_movie_clicked(self):
-        manage_cust = manager_func.schedule_movie(self)
+        manage_cust = manager_func.schedule_movie(self, self.login)
         manage_cust.exec_()
 
     def back_clicked(self):
