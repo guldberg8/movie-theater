@@ -315,14 +315,31 @@ DELIMITER ;
 
 
 #Screen 21
-DROP PROCEDURE IF EXISTS customer_view_history;
+DROP procedure IF EXISTS `customer_view_history`;
 DELIMITER $$
 CREATE PROCEDURE `customer_view_history`(IN i_cusUsername VARCHAR(50))
 BEGIN
-
+    DROP VIEW IF EXISTS `CosViewHistoryView`; 
+    CREATE VIEW `CosViewHistoryView` AS 
+    SELECT
+        Transaction.movieName as movName,
+        Transaction.theaterName as thName,
+        Transaction.companyName as comName,
+        Transaction.creditCardNum as creditCarNum,
+        Transaction.moviePlayDate as movPlayDate,
+        CreditCard.username username
+    FROM
+        Transaction
+    LEFT JOIN CreditCard ON Transaction.creditCardNum = CreditCard.creditCardNum;
+    
+    SELECT *
+    FROM CosViewHistoryView
+    WHERE username = CASE
+        WHEN LENGTH(i_cusUsername) > 0 THEN  i_cusUsername 
+        ELSE username
+        END;
 END$$
 DELIMITER ;
-
 
 #Screen 22
 DROP PROCEDURE IF EXISTS user_filter_th;
