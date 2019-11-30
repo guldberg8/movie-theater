@@ -26,7 +26,7 @@ from PyQt5.QtGui import (
 
 
 class theater_overview(QDialog):
-    def __init__(self, man_screen, selection = '', entered_movie_name = '',
+    def __init__(self, man_screen, login, selection = '', entered_movie_name = '',
                  entered_movie_duration = [0, 10000000], entered_movie_rel_date = ['1500-01-01', date.today().__str__()],
                  entered_movie_play_date = []):
         super(theater_overview, self).__init__()
@@ -39,6 +39,7 @@ class theater_overview(QDialog):
         self.rel_end = QLineEdit(selection)
         self.play_start = QLineEdit(selection)
         self.play_end = QLineEdit(selection)
+        self.login = login
 
         back_button = QPushButton('Back')
         calender_button1 = QPushButton('Cal')
@@ -97,13 +98,14 @@ class theater_overview(QDialog):
                         entered_movie_rel_date[1]])
         movies = cursor.fetchall()
 
-        # query = 'SELECT * FROM Manager where username = %s'
-        # user = UI.functionality_delegator.manage
-        # print(user)
-        # cursor.execute(query, user)
-        # manager = cursor.fetchone()
-        # company = manager['companyName']
-        # theater = manager['theaterName']
+        query = 'SELECT * FROM Manager where username = %s'
+        user = self.login.user.text()
+        cursor.execute(query, user)
+        manager = cursor.fetchone()
+        company = manager['companyName']
+        theater = manager['theaterName']
+        print(company)
+        print(theater)
 
 
         release_date = []
@@ -167,6 +169,7 @@ class theater_overview(QDialog):
             self.rel_end.setText(date.today().__str__())
 
         theater_over = theater_overview(self.back_screen,
+                                        self.login,
                                         entered_movie_name=self.movie_name.text(),
                                         entered_movie_duration=[dur_start, dur_end],
                                         entered_movie_rel_date=[self.rel_start.text(), self.rel_end.text()])

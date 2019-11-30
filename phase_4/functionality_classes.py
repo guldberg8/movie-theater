@@ -167,7 +167,7 @@ class manager_only(QDialog):
         self.setLayout(vbox)
 
     def theater_overview_clicked(self):
-        theater_overview = manager_func.theater_overview(self)
+        theater_overview = manager_func.theater_overview(self, self.login)
         theater_overview.exec_()
 
     def schedule_movie_clicked(self):
