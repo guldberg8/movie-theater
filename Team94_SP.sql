@@ -261,8 +261,8 @@ BEGIN
         (movName = i_movName OR i_movName = "") AND
         (movDuration is NULL OR (movDuration BETWEEN i_minMovDuration and i_maxMovDuration)) AND
         (movReleaseDate is NULL OR (movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate)) AND
-        (movPlayDate is NULL OR movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate)) AND
-        (CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate)) END;
+        (movPlayDate is NULL OR (movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate)) AND
+        (CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate) END);
 END$$
 DELIMITER ;
 
