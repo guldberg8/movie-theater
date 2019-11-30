@@ -44,6 +44,16 @@ class manage_comp(QDialog):
     def __init__(self):
         super(manage_comp, self).__init__()
         self.setWindowTitle("Manage Company")
+      
+class create_theater(QDialog):
+    def __init__(self):
+        super(create_theater, self).__init__()
+        self.setWindowTitle("Create Theater")
+
+class Company_detail(QDialog):
+    def __init__(self):
+        super(company_detail, self).__init__()
+        self.setWindowTitle("Company Detail")
 
 class create_movie(QDialog):
     def __init__(self):
