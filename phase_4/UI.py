@@ -45,6 +45,7 @@ else:
     test_user = ''
     test_pass = ''
 
+
 class DbLoginDialog(QDialog):
     def __init__(self):
         super(DbLoginDialog, self).__init__()
@@ -192,55 +193,56 @@ class invalid_credentials(QDialog):
         login.exec()
 
 
-def functionality_delegator(username):
-    login.close()
-    cursor = connection.cursor()
+class functionality_delegator():
+    def __init__(self, username):
+        login.close()
+        cursor = connection.cursor()
 
-    query = 'SELECT * FROM Employee WHERE username = %s;'
-    cursor.execute(query, username)
-    emp = cursor.fetchone()
-
-    if not emp:
-        query = 'SELECT * FROM Customer WHERE username = %s;'
+        query = 'SELECT * FROM Employee WHERE username = %s;'
         cursor.execute(query, username)
-        customer = cursor.fetchone()
-        if customer:
-            account_type = 'Customer'
+        emp = cursor.fetchone()
+
+        if not emp:
+            query = 'SELECT * FROM Customer WHERE username = %s;'
+            cursor.execute(query, username)
+            customer = cursor.fetchone()
+            if customer:
+                account_type = 'Customer'
+            else:
+                account_type = 'User'
         else:
-            account_type = 'User'
-    else:
-        query = 'SELECT * FROM Manager WHERE username = %s;'
-        cursor.execute(query, username)
-        manager = cursor.fetchone()
-        if not manager:
-            emp_type = 'Admin'
-        else:
-            emp_type = 'Manager'
-        account_type = emp_type
-        query = 'SELECT * FROM Customer WHERE username = %s;'
-        cursor.execute(query, username)
-        customer = cursor.fetchone()
-        if customer:
-            account_type = f'{emp_type}, Customer'
+            query = 'SELECT * FROM Manager WHERE username = %s;'
+            cursor.execute(query, username)
+            manager = cursor.fetchone()
+            if not manager:
+                emp_type = 'Admin'
+            else:
+                emp_type = 'Manager'
+            account_type = emp_type
+            query = 'SELECT * FROM Customer WHERE username = %s;'
+            cursor.execute(query, username)
+            customer = cursor.fetchone()
+            if customer:
+                account_type = f'{emp_type}, Customer'
 
-    if account_type == 'Admin':
-        admin_only_object = functionality_classes.admin_only(login)
-        admin_only_object.exec()
-    elif 'Admin' in account_type and 'Customer' in account_type:
-        admin_customer_object = functionality_classes.admin_customer(login)
-        admin_customer_object.exec()
-    elif account_type == 'Manager':
-        manager_only_object = functionality_classes.manager_only(login)
-        manager_only_object.exec()
-    elif 'Manager' in account_type and 'Customer' in account_type:
-        manager_customer_object = functionality_classes.manager_customer(login)
-        manager_customer_object.exec()
-    elif account_type == 'Customer':
-        customer_only_object = functionality_classes.customer_only(login)
-        customer_only_object.exec()
-    elif account_type == 'User':
-        user_only_object = functionality_classes.user_only(login)
-        user_only_object.exec()
+        if account_type == 'Admin':
+            admin_only_object = functionality_classes.admin_only(login)
+            admin_only_object.exec()
+        elif 'Admin' in account_type and 'Customer' in account_type:
+            admin_customer_object = functionality_classes.admin_customer(login)
+            admin_customer_object.exec()
+        elif account_type == 'Manager':
+            manager_only_object = functionality_classes.manager_only(login)
+            manager_only_object.exec()
+        elif 'Manager' in account_type and 'Customer' in account_type:
+            manager_customer_object = functionality_classes.manager_customer(login)
+            manager_customer_object.exec()
+        elif account_type == 'Customer':
+            customer_only_object = functionality_classes.customer_only(login)
+            customer_only_object.exec()
+        elif account_type == 'User':
+            user_only_object = functionality_classes.user_only(login)
+            user_only_object.exec()
 
 
 if __name__=='__main__':
@@ -249,5 +251,4 @@ if __name__=='__main__':
     login = DbLoginDialog()
     login.show()
     sys.exit(app.exec_())
-
 

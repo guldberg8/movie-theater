@@ -95,8 +95,17 @@ class theater_overview(QDialog):
                        entered_movie_duration[1],
                        entered_movie_rel_date[0],
                         entered_movie_rel_date[1]])
-        print(entered_movie_rel_date)
         movies = cursor.fetchall()
+
+        # query = 'SELECT * FROM Manager where username = %s'
+        # user = UI.functionality_delegator.manage
+        # print(user)
+        # cursor.execute(query, user)
+        # manager = cursor.fetchone()
+        # company = manager['companyName']
+        # theater = manager['theaterName']
+
+
         release_date = []
         names = []
         duration = []
