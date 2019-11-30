@@ -28,7 +28,7 @@ from PyQt5.QtGui import (
 class theater_overview(QDialog):
     def __init__(self, man_screen, login, selection = '', entered_movie_name = '',
                  entered_movie_duration = [0, 10000000], entered_movie_rel_date = ['1500-01-01', date.today().__str__()],
-                 entered_movie_play_date = []):
+                 entered_movie_play_date = ['1500-01-01', '5000-01-01']):
         super(theater_overview, self).__init__()
         self.setWindowTitle("Theater Overview")
         self.back_screen = man_screen
@@ -88,14 +88,17 @@ class theater_overview(QDialog):
 
         connection = UI.connection
         cursor = connection.cursor()
-        query = 'SELECT * FROM Movie where movName LIKE %s and duration between %s and %s' \
-                ' and movReleaseDate between %s and %s;'
+        query = 'SELECT * FROM Movie join MoviePlay on Movie.movName=MoviePlay.movieName where movName LIKE %s and duration between %s and %s' \
+                ' and movReleaseDate between %s and %s and date between %s and %s or date < %s;'
         cursor.execute(query,
                        [f'%{entered_movie_name}%',
                        entered_movie_duration[0],
                        entered_movie_duration[1],
                        entered_movie_rel_date[0],
-                        entered_movie_rel_date[1]])
+                        entered_movie_rel_date[1],
+                        entered_movie_play_date[0],
+                        entered_movie_play_date[1],
+                        '0010/01/01'])
         movies = cursor.fetchall()
 
         query = 'SELECT * FROM Manager where username = %s'
@@ -109,14 +112,19 @@ class theater_overview(QDialog):
         release_date = []
         names = []
         duration = []
+        play_date = []
         for movie in movies:
             release_date.append(movie['movReleaseDate'])
             names.append(movie['movName'])
             duration.append(movie['duration'])
+            play_date.append(movie['date'])
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(['Movie Name', 'Duration', 'Release Date', 'Play Date'])
         for i in range(len(movies)):
-            model.appendRow([QStandardItem(names[i]), QStandardItem(duration[i]), QStandardItem(str(release_date[i]))])
+            if play_date[i] == '0000-00-00 00:00:00':
+                play_date[i] = ''
+            model.appendRow([QStandardItem(names[i]), QStandardItem(duration[i]),
+                             QStandardItem(str(release_date[i])), QStandardItem(str(play_date[i]))])
 
         table = QTableView()
         table.setModel(model)
@@ -165,12 +173,17 @@ class theater_overview(QDialog):
             self.rel_start.setText('1500-01-01')
         if self.rel_end.text() == '':
             self.rel_end.setText(date.today().__str__())
+        if self.play_start.text() == '':
+            self.play_start.setText('1500-01-01')
+        if self.play_end.text() == '':
+            self.play_end.setText('5000-01-01')
 
         theater_over = theater_overview(self.back_screen,
                                         self.login,
                                         entered_movie_name=self.movie_name.text(),
                                         entered_movie_duration=[dur_start, dur_end],
-                                        entered_movie_rel_date=[self.rel_start.text(), self.rel_end.text()])
+                                        entered_movie_rel_date=[self.rel_start.text(), self.rel_end.text()],
+                                        entered_movie_play_date=[self.play_start.text(), self.play_end.text()])
         theater_over.exec_()
 
 

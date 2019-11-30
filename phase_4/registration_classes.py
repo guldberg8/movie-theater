@@ -480,7 +480,7 @@ class man_registration_popup(QDialog):
         else:
             query = 'INSERT INTO User (username, status, password, firstName, lastName) values (%s, %s, %s, %s, %s);'
             cursor.execute(query,
-                               [self.user.text(), 'Approved', self.password.text(),
+                               [self.user.text(), 'Pending', self.password.text(),
                                 self.first_name.text(), self.last_name.text()])
             connection.commit()
 
