@@ -37,7 +37,8 @@ connection = pymysql.connect(host='localhost',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 test = True
-cust = True
+cust = False
+admin = False
 
 if test:
     test_user = 'manager1'
@@ -45,6 +46,9 @@ if test:
     if cust:
         test_user ='ilikemoney$$'
         test_pass ='111111110'
+    if admin:
+        test_user = 'cool_class4400'
+        test_pass = '333333333'
 else:
     test_user = ''
     test_pass = ''

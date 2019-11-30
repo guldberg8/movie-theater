@@ -173,7 +173,7 @@ class create_theater(QDialog):
 
 class Company_detail(QDialog):
     def __init__(self):
-        super(company_detail, self).__init__()
+        super(Company_detail, self).__init__()
         self.setWindowTitle("Company Detail")
 
         self.b1 = QPushButton("Back")
