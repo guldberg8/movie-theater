@@ -20,7 +20,7 @@ def get_sheets():
 def get_queries():
 
     queries = {'Company':'INSERT INTO Company (companyName) values (%s);',
-        'Users':'INSERT INTO User (username, status, password, firstName, lastName) values (%s,%s,%s,%s,%s);',
+        'Users':'INSERT INTO User (username, status, password, firstName, lastName) values (%s,%s,MD5(%s),%s,%s);',
         'Movie':'INSERT INTO Movie (releaseDate, movieName, duration) values (%s,%s,%s);',
         'Employee':'INSERT INTO Employee (username) values (%s);',
         'CustomerCreditCard':'INSERT INTO CreditCard (creditCardNum, username) values (%s, %s);',

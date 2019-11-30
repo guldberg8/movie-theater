@@ -15,7 +15,7 @@ BEGIN
     LEFT JOIN Admin ON User.username = Admin.username
     LEFT JOIN Manager ON User.username = Manager.username
     LEFT JOIN Customer ON User.username = Customer.username
-    WHERE User.username = i_username AND User.password = i_password;
+    WHERE User.username = i_username AND User.password = MD5(i_password);
 END$$
 DELIMITER ;
 
@@ -46,7 +46,7 @@ DROP PROCEDURE IF EXISTS `customer_add_creditcard`;
 DELIMITER $$
 CREATE PROCEDURE `customer_add_creditcard`(IN i_username VARCHAR(50), IN i_creditCardNum CHAR(50))
 BEGIN
-    INSERT INTO creditCard (creditCardNum, username) VALUES (i_creditCardNum, i_username);
+    INSERT INTO CreditCard (creditCardNum, username) VALUES (i_creditCardNum, i_username);
 END$$
 DELIMITER ;
 
@@ -68,7 +68,7 @@ CREATE PROCEDURE `manager_customer_register`(IN i_username VARCHAR(50), IN i_pas
 BEGIN
     INSERT INTO User (username, password, firstname, lastname) VALUES (i_username, MD5(i_password), i_firstname, i_lastname);
     INSERT INTO Customer (username) VALUES (i_username);
-    INSERT INTO MANAGER (username, street, city, state, zipcode, companyName, theaterName) VALUES (i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName, NULL);
+    INSERT INTO Manager (username, street, city, state, zipcode, companyName) VALUES (i_username, i_empStreet, i_empCity, i_empState, i_empZipcode, i_comName);
 END$$
 DELIMITER ;
 
@@ -111,13 +111,13 @@ BEGIN
     DROP VIEW IF EXISTS `AdFilterUserView`; 
     CREATE VIEW `AdFilterUserView` AS 
     SELECT
-        User.username,
+        User.username as username,
         COUNT(CreditCard.creditCardNum) As creditCardCount,
         IF(Admin.username IS NULL, IF(Manager.username IS NULL,
         IF(Customer.username IS NULL, CONVERT("User",CHAR), CONVERT("Customer",CHAR)),
         IF(Customer.username IS NULL, CONVERT("Manager",CHAR), CONVERT("CustomerManager",CHAR))),
         IF(Customer.username IS NULL, CONVERT("Admin",CHAR), CONVERT("CustomerAdmin",CHAR))) As userType,
-        User.status
+        User.status as status
     FROM
         User
     LEFT JOIN CreditCard ON User.username = CreditCard.username
@@ -131,8 +131,8 @@ BEGIN
     SELECT *
     FROM AdFilterUserView
     WHERE
-		(username = i_username) OR (username = "") AND
-        (status = i_status) OR (status = "ALL") OR (status = "")
+		((username = i_username) OR (i_username = "") OR (i_username = '')) AND
+        ((status = i_status) OR (i_status = "ALL") OR (i_status = "") OR (i_status = 'ALL') OR (i_status = ''))
     ORDER BY 
         (CASE WHEN (i_sortBy='creditCardCount') AND (i_sortDirection='ASC') THEN creditCardCount END) ASC,
         (CASE WHEN (i_sortBy='creditCardCount') THEN creditCardCount END) DESC,
@@ -190,9 +190,9 @@ DELIMITER ;
 #check for inconsistency with table variable names and order
 DROP PROCEDURE IF EXISTS `admin_create_theater`;
 DELIMITER $$
-CREATE PROCEDURE `admin_create_theater`(IN i_thName VARCHAR(50), IN i_thStreet VARCHAR(50), IN i_thCity VARCHAR(50), IN i_thState CHAR(3), IN i_thZipcode CHAR(50), IN i_capacity INT, IN i_manUsername VARCHAR(50))
+CREATE PROCEDURE `admin_create_theater`(IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_thStreet VARCHAR(50), IN i_thCity VARCHAR(50), IN i_thState CHAR(3), IN i_thZipcode CHAR(50), IN i_capacity INT, IN i_manUsername VARCHAR(50))
 BEGIN
-    INSERT INTO Theater (companyName, theaterName, street, city, state, zipcode, capacity, manager) VALUES (i_comName, i_thName, i_thStreet, i_thCity, i_thState, i_thZipcode, i_capacity, NULL);
+    INSERT INTO Theater (companyName, theaterName, manager, street, city, state, zipcode, capacity) VALUES (i_comName, i_thName, i_manUsername, i_thStreet, i_thCity, i_thState, i_thZipcode, i_capacity);
 END$$
 DELIMITER ;
 
@@ -230,7 +230,7 @@ DROP PROCEDURE IF EXISTS `admin_create_mov`;
 DELIMITER $$
 CREATE PROCEDURE `admin_create_mov`(IN i_movName VARCHAR(50), IN i_movDuration INT, IN i_movReleaseDate DATE)
 BEGIN
-    INSERT INTO Movie (releaseDate, name, duration) values (i_movReleaseDate, i_movName, i_movDuration);
+    INSERT INTO Movie (releaseDate, movieName, duration) values (i_movReleaseDate, i_movName, i_movDuration);
 END$$
 DELIMITER ;
 
@@ -241,7 +241,7 @@ CREATE PROCEDURE `manager_filter_th`(IN i_manUsername VARCHAR(50), IN i_movName 
 BEGIN
     DROP VIEW IF EXISTS `ManagerFilterThView`; 
     CREATE VIEW `ManagerFilterThView` AS 
-    SELECT
+        SELECT
         Movie.movieName as movName,
         Movie.duration as movDuration,
         Movie.releaseDate as movReleaseDate,
@@ -252,17 +252,20 @@ BEGIN
     LEFT JOIN MoviePlay ON Movie.movieName = MoviePlay.movieName
     LEFT JOIN Theater ON MoviePlay.theaterName = Theater.theaterName;
     
-    DROP TABLE IF EXISTS `ManFilterTh`;
+	DROP TABLE IF EXISTS `ManFilterTh`;
     CREATE TABLE `ManFilterTh` AS
     SELECT movName, movDuration, movReleaseDate, movPlayDate
     FROM ManagerFilterThView
     WHERE 
-		(manUsername = i_manUsername OR i_manUsername = "") AND
-        (movName = i_movName OR i_movName = "") AND
-        (movDuration is NULL OR (movDuration BETWEEN i_minMovDuration and i_maxMovDuration)) AND
-        (movReleaseDate is NULL OR (movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate)) AND
-        (movPlayDate is NULL OR (movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate)) AND
-        (CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate) END);
+		(manUsername = i_manUsername OR manUsername is NULL OR i_manUsername = "" OR i_manUsername = '') AND
+        (movName = i_movName OR i_movName = "" OR i_movName = '') AND
+        (i_minMovDuration is NULL OR movDuration >= i_minMovDuration) AND
+        (i_maxMovDuration is NULL OR movDuration <= i_maxMovDuration) AND
+        (i_minMovReleaseDate is NULL OR movReleaseDate <= i_minMovReleaseDate) AND 
+        (i_maxMovReleaseDate is NULL OR movReleaseDate <= i_maxMovReleaseDate) AND 
+        (i_minMovPlayDate is NULL OR movPlayDate <= i_minMovPlayDate) AND
+        (i_maxMovPlayDate is NULL OR movPlayDate <= i_maxMovPlayDate) AND
+        (i_includeNotPlayed is NULL OR (i_includeNotPLayed AND movReleaseDate is NULL AND movPlayDate is NULL));
 END$$
 DELIMITER ;
 
@@ -271,7 +274,7 @@ DROP PROCEDURE IF EXISTS `manager_schedule_mov`;
 DELIMITER $$
 CREATE PROCEDURE `manager_schedule_mov`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_movPlayDate DATE)
 BEGIN
-    INSERT INTO MoviePlay (companyName, theaterName, movieReleaseDate, movieName, playDate) values ((SELECT companyName FROM Theater WHERE managerUsername = i_manUsername), (SELECT theaterName FROM Theater WHERE managerUsername = i_manUsername), i_movReleaseDate, i_movName, i_movPlayDate);
+    INSERT INTO MoviePlay (companyName, theaterName, movieReleaseDate, movieName, playDate) values ((SELECT companyName FROM Theater WHERE manager = i_manUsername), (SELECT theaterName FROM Theater WHERE manager = i_manUsername), i_movReleaseDate, i_movName, i_movPlayDate);
 END$$
 DELIMITER ;
 
@@ -296,10 +299,10 @@ BEGIN
     FROM MoviePlay
     LEFT JOIN Theater ON MoviePlay.theaterName = Theater.theaterName
     WHERE 
-		(movieName = i_movName OR i_movName = "") AND
-        (MoviePlay.companyName = i_comName OR i_comName = "") AND
-        (city = i_city OR i_city = "") AND
-        (state = i_state OR i_state = "") AND
+		(movieName = i_movName OR i_movName = "" OR i_movName = "ALL") AND
+        (MoviePlay.companyName = i_comName OR i_comName = "" OR i_comName = "ALL") AND
+        (city = i_city OR i_city = "" OR i_city="ALL") AND
+        (state = i_state OR i_state = "" OR i_state = "ALL") AND
         ((playDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate) OR 
         (i_minMovPlayDate is NULL) OR
         (i_maxMovPlayDate is NULL));
@@ -312,7 +315,7 @@ DROP PROCEDURE IF EXISTS `customer_view_mov`;
 DELIMITER $$
 CREATE PROCEDURE `customer_view_mov`(IN i_creditCardNum CHAR(50), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_movPlayDate DATE)
 BEGIN
-    INSERT INTO Transaction (creditCard, theaterName, companyName, movieReleaseDate, movieName, date) VALUES (i_creditCardNum, i_thName, i_comName, i_movReleaseDate, i_movName, i_movPlayDate);
+    INSERT INTO Transaction (creditCardNum, theaterName, companyName, movieReleaseDate, movieName, moviePlayDate) VALUES (i_creditCardNum, i_thName, i_comName, i_movReleaseDate, i_movName, i_movPlayDate);
 END$$
 DELIMITER ;
 
