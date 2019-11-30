@@ -130,16 +130,9 @@ BEGIN
     CREATE TABLE `AdFilterUser` AS
     SELECT *
     FROM AdFilterUserView
-    WHERE username = CASE
-        WHEN LENGTH(i_username) > 0 THEN  i_username 
-        ELSE username
-        END
-    AND
-        status = CASE
-        WHEN i_status='ALL' then status
-        WHEN LENGTH(i_status) > 0 THEN i_status
-        ELSE status
-        END
+    WHERE
+		(username = i_username) OR (username = '') AND
+        (status = i_status) OR (status = 'ALL') OR (status = '')
     ORDER BY 
         (CASE WHEN (i_sortBy='creditCardCount') AND (i_sortDirection='ASC') THEN creditCardCount END) ASC,
         (CASE WHEN (i_sortBy='creditCardCount') THEN creditCardCount END) DESC,
@@ -173,16 +166,14 @@ BEGIN
     CREATE TABLE `AdFilterCom` AS
     SELECT *
     FROM AdFilterComView
-    WHERE comName = CASE
-        WHEN LENGTH(i_comName) > 0 THEN  i_comName 
-        ELSE comName
-        END
-    AND
-        (numCityCover BETWEEN i_minCity and i_maxCity) OR (numCityCover is NULL)
-    AND
-        (numTheater BETWEEN i_minTheater and i_maxTheater) OR (numTheater is NULL)
-    AND
-        (numEmployee BETWEEN i_minEmployee and i_maxEmployee) OR (numEmployee is NULL)
+    WHERE 
+		(comName = i_comName OR i_comName = '' OR i_comName = 'ALL') AND
+        (numCityCover is NULL OR numCityCover>=i_minCity) AND
+        (numCityCover is NULL OR numCityCover<=i_maxCity) AND
+        (numTheater is NULL OR numTheater >= i_minTheater) AND
+        (numTheater is NULL OR numTheater <= i_maxTheater) AND
+		(numEmployee is NULL OR numEmployee >= i_minEmployee) AND
+        (numEmployee is NULL OR numEmployee <= i_maxEmployee)
     ORDER BY 
         (CASE WHEN (i_sortBy='numCityCover') AND (i_sortDirection='ASC') THEN numCityCover END) ASC,
         (CASE WHEN (i_sortBy='numCityCover') THEN numCityCover END) DESC,
@@ -193,7 +184,6 @@ BEGIN
         (CASE WHEN (i_sortDirection='ASC') THEN comName END) ASC,
         comName DESC;
 END$$
-
 DELIMITER ;
 
 #Screen 15
@@ -266,23 +256,13 @@ BEGIN
     CREATE TABLE `ManFilterTh` AS
     SELECT movName, movDuration, movReleaseDate, movPlayDate
     FROM ManagerFilterThView
-    WHERE manUsername = CASE
-        WHEN LENGTH(i_manUsername) > 0 THEN  i_manUsername 
-        ELSE manUsername
-        END
-    AND
-        movName = CASE
-        WHEN LENGTH(i_movName) > 0 THEN  i_movName
-        ELSE movName
-        END
-    AND
-        (movDuration BETWEEN i_minMovDuration and i_maxMovDuration) OR (movDuration is NULL)
-    AND
-        (movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate) OR (movReleaseDate is NULL)
-    AND
-        (movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate) OR (movPlayDate is NULL)
-    AND
-        CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate) END;
+    WHERE 
+		(manUsername = i_manUsername OR i_manUsername = '') AND
+        (movName = i_movName OR i_movName = '') AND
+        (movDuration is NULL OR (movDuration BETWEEN i_minMovDuration and i_maxMovDuration)) AND
+        (movReleaseDate is NULL OR (movReleaseDate BETWEEN i_minMovReleaseDate and i_maxMovReleaseDate)) AND
+        (movPlayDate is NULL OR movPlayDate BETWEEN i_minMovPlayDate and i_maxMovPlayDate)) AND
+        (CASE WHEN i_includeNotPlayed THEN TRUE ELSE (CURDATE()>movPlayDate)) END;
 END$$
 DELIMITER ;
 
@@ -342,27 +322,19 @@ DROP procedure IF EXISTS `customer_view_history`;
 DELIMITER $$
 CREATE PROCEDURE `customer_view_history`(IN i_cusUsername VARCHAR(50))
 BEGIN
-    DROP VIEW IF EXISTS `CosViewHistoryView`; 
-    CREATE VIEW `CosViewHistoryView` AS 
+    DROP TABLE IF EXISTS `CosViewHistory`;
+    CREATE TABLE `CosViewHistory` AS
     SELECT
         Transaction.movieName as movName,
         Transaction.theaterName as thName,
         Transaction.companyName as comName,
         Transaction.creditCardNum as creditCardNum,
         Transaction.moviePlayDate as movPlayDate,
-        CreditCard.username username
+        CreditCard.username as username
     FROM
         Transaction
-    LEFT JOIN CreditCard ON Transaction.creditCardNum = CreditCard.creditCardNum;
-    
-    DROP TABLE IF EXISTS `CosViewHistory`;
-    CREATE TABLE `CosViewHistory` AS
-    SELECT *
-    FROM CosViewHistoryView
-    WHERE username = CASE
-        WHEN LENGTH(i_cusUsername) > 0 THEN  i_cusUsername 
-        ELSE username
-        END;
+    LEFT JOIN CreditCard ON Transaction.creditCardNum = CreditCard.creditCardNum
+    WHERE (CreditCard.username = i_cusUsername OR i_cusUsername = '');
 END$$
 DELIMITER ;
 
