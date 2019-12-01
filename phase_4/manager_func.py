@@ -340,7 +340,7 @@ class schedule_movie(QDialog):
         cursor.execute(query)
         movies = cursor.fetchall()
         for movie in movies:
-            self.name_dropdown.addItem(movie['movName'])
+            self.name_dropdown.addItem(movie['movieName'])
 
         vbox = QVBoxLayout()
         row1 =QHBoxLayout()
@@ -386,7 +386,7 @@ class schedule_movie(QDialog):
             error.exec_()
         connection = UI.connection
         cursor = connection.cursor()
-        query = 'SELECT * FROM Movie where movName = %s and movReleaseDate = %s;'
+        query = 'SELECT * FROM Movie where movieName = %s and releaseDate = %s;'
         cursor.execute(query, [self.name_dropdown.currentText(), self.rel_date.text()])
         movies = cursor.fetchall()
 
@@ -402,14 +402,20 @@ class schedule_movie(QDialog):
             cursor.execute(query, user)
             manager = cursor.fetchone()
             self.company = manager['companyName']
-            self.theater = manager['theaterName']
-            if not self.theater:
-                self.theater = 'test'
-
-            query = 'INSERT into MoviePlay (theaterName, companyName, movieReleaseDate, movieName, date) values (%s, %s, %s, %s, %s)'
-            cursor.execute(query, [self.theater, self.company, self.rel_date.text(), self.name_dropdown.currentText(), self.play_date.text()])
-            connection.commit()
-            self.close()
+            query = 'SELECT * FROM Theater where manager = %s'
+            cursor.execute(query, user)
+            theater = cursor.fetchone()
+            if theater:
+                self.theater = manager['theaterName']
+                query = 'INSERT into MoviePlay (theaterName, companyName, movieReleaseDate, movieName, playDate) values (%s, %s, %s, %s, %s)'
+                cursor.execute(query,
+                               [self.theater, self.company, self.rel_date.text(), self.name_dropdown.currentText(),
+                                self.play_date.text()])
+                connection.commit()
+                self.close()
+            else:
+                a = manager_no_theater()
+                a.exec_()
 
 class movie_does_not_exist(QDialog):
     def __init__(self):
@@ -419,6 +425,20 @@ class movie_does_not_exist(QDialog):
         back_button = QPushButton('Back')
         back_button.clicked.connect(self.back_pressed)
         vbox.addWidget(QLabel('Movie Not Found. Please try again.'))
+        vbox.addWidget(back_button)
+        self.setLayout(vbox)
+
+    def back_pressed(self):
+        self.close()
+
+class manager_no_theater(QDialog):
+    def __init__(self):
+        super(manager_no_theater, self).__init__()
+        self.setWindowTitle("No Theater Found")
+        vbox = QVBoxLayout()
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_pressed)
+        vbox.addWidget(QLabel('You have no theater. Please try again.'))
         vbox.addWidget(back_button)
         self.setLayout(vbox)
 
