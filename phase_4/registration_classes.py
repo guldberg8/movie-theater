@@ -141,16 +141,16 @@ class user_register_popup(QDialog):
 
 
 class cust_registration_popup(QDialog):
-    def __init__(self, nav_screen):
+    def __init__(self, nav_screen, cards=[], user='', password='', first='', last='', confirm=''):
         super(cust_registration_popup, self).__init__()
         self.setWindowTitle("Customer Registration")
         self.nav_screen = nav_screen
-        self.user = QLineEdit()
-        self.password = QLineEdit()
+        self.user = QLineEdit(user)
+        self.password = QLineEdit(password)
         self.password.setEchoMode(QLineEdit.Password)
-        self.first_name = QLineEdit()
-        self.last_name = QLineEdit()
-        self.confirm_pass = QLineEdit()
+        self.first_name = QLineEdit(first)
+        self.last_name = QLineEdit(last)
+        self.confirm_pass = QLineEdit(confirm)
         self.confirm_pass.setEchoMode(QLineEdit.Password)
         self.line_edits = [self.user, self.password, self.first_name, self.last_name, self.confirm_pass]
 
@@ -175,6 +175,75 @@ class cust_registration_popup(QDialog):
         back_button.clicked.connect(self.back_clicked)
         register_button.clicked.connect(self.register_user)
         layout.addRow(back_button, register_button)
+
+
+        connection = UI.connection
+        cursor = connection.cursor()
+        query = "SELECT creditCardNum from creditCard WHERE username = %s"
+        # do we have username in this scope? I think we need it
+        cursor.execute(query, self.user.text())
+
+        row_count = len(cards)
+        self.cc_rows = cards
+        for row_count, row in enumerate(cursor.fetchall()):
+            new_row = QHBoxLayout()
+
+            new_row.addWidget(QLabel(str(row['creditCardNum'])))
+
+            remove_button = QPushButton('Remove')
+            # connect to function that removes creditCard
+            remove_button.clicked.connect(self.rem_card)
+
+            new_row.addWidget(remove_button)
+            self.cc_rows.append(new_row)
+
+        self.card1 = ''
+        self.card2 = ''
+        self.card3 = ''
+        self.card4 = ''
+        self.card5 = ''
+        self.active_card = ''
+        while (row_count < 5):
+            new_row = QHBoxLayout()
+
+            if row_count == 0:
+                self.card1 = QLineEdit()
+                new_row.addWidget(self.card1)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card1)
+            if row_count == 1:
+                self.card2 = QLineEdit()
+                new_row.addWidget(self.card2)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card2)
+            if row_count == 2:
+                self.card3 = QLineEdit()
+                new_row.addWidget(self.card3)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card3)
+            if row_count == 3:
+                self.card4 = QLineEdit()
+                new_row.addWidget(self.card4)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card4)
+            if row_count == 4:
+                self.card5 = QLineEdit()
+                new_row.addWidget(self.card5)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card5)
+
+
+            # set button to trigger query on CC# in this line
+
+            new_row.addWidget(add_button)
+
+            self.cc_rows.append(new_row)
+            row_count += 1
+
+        for row in self.cc_rows:
+            layout.addRow(row)
+
+
         form_group_box.setLayout(layout)
         vbox_layout = QVBoxLayout()
         vbox_layout.addWidget(form_group_box)
@@ -183,6 +252,100 @@ class cust_registration_popup(QDialog):
         self.setLayout(vbox_layout)
         self.first_name.setFocus()
         register_button.setDefault(True)
+
+    def rem_card(self):
+        print('rem')
+
+    def add_card1(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card1
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card2(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card2
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card3(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card3
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card4(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card4
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card5(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card5
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
 
     def register_user(self):
         ty = 0
@@ -226,18 +389,32 @@ class cust_registration_popup(QDialog):
         self.close()
         self.nav_screen.exec_()
 
+class user_not_found(QDialog):
+    def __init__(self):
+        super(user_not_found, self).__init__()
+        self.setWindowTitle("User Not Found")
+        vbox = QVBoxLayout()
+        back_button = QPushButton('Back')
+        back_button.clicked.connect(self.back_pressed)
+        vbox.addWidget(QLabel('User Not Found. Please try again.'))
+        vbox.addWidget(back_button)
+        self.setLayout(vbox)
+
+    def back_pressed(self):
+        self.close()
+
 
 class man_cust_registration_popup(QDialog):
-    def __init__(self, nav_screen):
+    def __init__(self, nav_screen, cards=[], user='', password='', first='', last='', confirm=''):
         super(man_cust_registration_popup, self).__init__()
         self.setWindowTitle("Manager-Customer Registration")
         self.nav_screen = nav_screen
-        self.user = QLineEdit()
-        self.password = QLineEdit()
+        self.user = QLineEdit(user)
+        self.password = QLineEdit(password)
         self.password.setEchoMode(QLineEdit.Password)
-        self.first_name = QLineEdit()
-        self.last_name = QLineEdit()
-        self.confirm_pass = QLineEdit()
+        self.first_name = QLineEdit(first)
+        self.last_name = QLineEdit(last)
+        self.confirm_pass = QLineEdit(confirm)
         self.confirm_pass.setEchoMode(QLineEdit.Password)
         self.address = QLineEdit()
         self.city = QLineEdit()
@@ -259,7 +436,7 @@ class man_cust_registration_popup(QDialog):
         cursor.execute(query)
         companies = cursor.fetchall()
         for company in companies:
-            self.company.addItem(company['name'])
+            self.company.addItem(company['companyName'])
         for state in states:
             self.state.addItem(state)
 
@@ -308,6 +485,172 @@ class man_cust_registration_popup(QDialog):
         self.setLayout(vbox_layout)
         self.first_name.setFocus()
         register_button.setDefault(True)
+
+        connection = UI.connection
+        cursor = connection.cursor()
+        query = "SELECT creditCardNum from creditCard WHERE username = %s"
+        # do we have username in this scope? I think we need it
+        cursor.execute(query, self.user.text())
+
+        row_count = len(cards)
+        self.cc_rows = cards
+        for row_count, row in enumerate(cursor.fetchall()):
+            new_row = QHBoxLayout()
+
+            new_row.addWidget(QLabel(str(row['creditCardNum'])))
+
+            remove_button = QPushButton('Remove')
+            # connect to function that removes creditCard
+            remove_button.clicked.connect(self.rem_card)
+
+            new_row.addWidget(remove_button)
+            self.cc_rows.append(new_row)
+
+        self.card1 = ''
+        self.card2 = ''
+        self.card3 = ''
+        self.card4 = ''
+        self.card5 = ''
+        self.active_card = ''
+        while (row_count < 5):
+            new_row = QHBoxLayout()
+
+            if row_count == 0:
+                self.card1 = QLineEdit()
+                new_row.addWidget(self.card1)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card1)
+            if row_count == 1:
+                self.card2 = QLineEdit()
+                new_row.addWidget(self.card2)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card2)
+            if row_count == 2:
+                self.card3 = QLineEdit()
+                new_row.addWidget(self.card3)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card3)
+            if row_count == 3:
+                self.card4 = QLineEdit()
+                new_row.addWidget(self.card4)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card4)
+            if row_count == 4:
+                self.card5 = QLineEdit()
+                new_row.addWidget(self.card5)
+                add_button = QPushButton('Add')
+                add_button.clicked.connect(self.add_card5)
+
+            # set button to trigger query on CC# in this line
+
+            new_row.addWidget(add_button)
+
+            self.cc_rows.append(new_row)
+            row_count += 1
+
+        for row in self.cc_rows:
+            layout.addRow(row)
+
+        form_group_box.setLayout(layout)
+        vbox_layout = QVBoxLayout()
+        vbox_layout.addWidget(form_group_box)
+
+        self.setLayout(vbox_layout)
+        self.first_name.setFocus()
+        register_button.setDefault(True)
+
+    def rem_card(self):
+        print('rem')
+
+    def add_card1(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card1
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = man_cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card2(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card2
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = man_cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card3(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card3
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = man_cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card4(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card4
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = man_cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
+
+    def add_card5(self):
+        self.close()
+        connection = UI.connection
+        cursor = connection.cursor()
+        card = self.card5
+
+        if self.user.text() != '' and card != '':
+            try:
+                query = 'INSERT INTO creditCard (creditCardNum, username) values (%s, %s)'
+                cursor.execute(query, [card.text(), self.user.text()])
+                new_screen = man_cust_registration_popup(self.nav_screen, self.cc_rows, self.user.text(),
+                                                     self.password.text(), self.first_name.text(),
+                                                     self.last_name.text(), self.confirm_pass.text())
+                new_screen.exec_()
+            except:
+                error = user_not_found()
+                error.exec_()
 
     def register_user(self):
         ty = 0
@@ -394,7 +737,7 @@ class man_registration_popup(QDialog):
         cursor.execute(query)
         companies = cursor.fetchall()
         for company in companies:
-            self.company.addItem(company['name'])
+            self.company.addItem(company['companyName'])
         for state in states:
             self.state.addItem(state)
 
