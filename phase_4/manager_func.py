@@ -79,7 +79,8 @@ class theater_overview(QDialog):
         row3.addWidget(self.play_end)
         row3.addWidget(calender_button4)
 
-        row4.addWidget(QRadioButton())
+        self.radio = QRadioButton()
+        row4.addWidget(self.radio)
         row4.addWidget(QLabel('Only Include Not Played Movies'))
 
         filter_button = QPushButton('Filter')
@@ -88,8 +89,8 @@ class theater_overview(QDialog):
 
         connection = UI.connection
         cursor = connection.cursor()
-        query = 'SELECT * FROM Movie join MoviePlay on Movie.movName=MoviePlay.movieName where movName LIKE %s and duration between %s and %s' \
-                ' and movReleaseDate between %s and %s and date between %s and %s or date < %s;'
+        query = 'SELECT * FROM Movie join MoviePlay on Movie.movieName=MoviePlay.movieName where Movie.movieName LIKE %s and duration between %s and %s' \
+                ' and releaseDate between %s and %s and playDate between %s and %s or playDate < %s;'
         cursor.execute(query,
                        [f'%{entered_movie_name}%',
                        entered_movie_duration[0],
@@ -106,7 +107,6 @@ class theater_overview(QDialog):
         cursor.execute(query, user)
         manager = cursor.fetchone()
         self.company = manager['companyName']
-        self.theater = manager['theaterName']
 
 
         release_date = []
@@ -114,10 +114,10 @@ class theater_overview(QDialog):
         duration = []
         play_date = []
         for movie in movies:
-            release_date.append(movie['movReleaseDate'])
-            names.append(movie['movName'])
+            release_date.append(movie['releaseDate'])
+            names.append(movie['movieName'])
             duration.append(movie['duration'])
-            play_date.append(movie['date'])
+            play_date.append(movie['playDate'])
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(['Movie Name', 'Duration', 'Release Date', 'Play Date'])
         for i in range(len(movies)):
@@ -170,13 +170,16 @@ class theater_overview(QDialog):
         else:
             dur_end = 1000000
         if self.rel_start.text() == '':
-            self.rel_start.setText('1500-01-01')
+            self.rel_start.setText('1500/01/01')
         if self.rel_end.text() == '':
             self.rel_end.setText(date.today().__str__())
         if self.play_start.text() == '':
-            self.play_start.setText('1500-01-01')
+            self.play_start.setText('1500/01/01')
         if self.play_end.text() == '':
-            self.play_end.setText('5000-01-01')
+            self.play_end.setText('5000/01/01')
+        if self.radio.isChecked():
+            if dt.strptime(self.play_start.text(), '%Y/%m/%d'):
+                self.play_start.setText(date.today().__str__())
 
         theater_over = theater_overview(self.back_screen,
                                         self.login,
