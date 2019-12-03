@@ -776,7 +776,11 @@ BEGIN
     
 	DROP TABLE IF EXISTS `ManFilterTh`;
     CREATE TABLE `ManFilterTh` AS
-    SELECT movName, movDuration, movReleaseDate, movPlayDate
+    SELECT 
+		movName, 
+        movDuration,
+        movReleaseDate, 
+        movPlayDate
     FROM ManagerFilterThView
     WHERE 
 		(manUsername = i_manUsername OR manUsername is NULL OR i_manUsername = "" OR i_manUsername = '') AND
@@ -787,7 +791,25 @@ BEGIN
         (i_maxMovReleaseDate is NULL OR movReleaseDate <= i_maxMovReleaseDate) AND 
         (i_minMovPlayDate is NULL OR movPlayDate >= i_minMovPlayDate) AND
         (i_maxMovPlayDate is NULL OR movPlayDate <= i_maxMovPlayDate) AND
-        (i_includeNotPlayed is NULL OR (i_includeNotPLayed AND movPlayDate is NULL));
+        (i_includeNotPlayed is NULL OR (i_includeNotPLayed AND movPlayDate is NULL))
+	UNION
+    SELECT
+		DISTINCT movName, 
+        movDuration,
+        movReleaseDate, 
+        null as movPlayDate
+	FROM 
+		ManagerFilterThView
+	WHERE
+        (movName = i_movName OR i_movName = "" OR i_movName = '') AND
+        (i_minMovDuration is NULL OR movDuration >= i_minMovDuration) AND
+        (i_maxMovDuration is NULL OR movDuration <= i_maxMovDuration) AND
+        (i_minMovReleaseDate is NULL OR movReleaseDate >= i_minMovReleaseDate) AND 
+        (i_maxMovReleaseDate is NULL OR movReleaseDate <= i_maxMovReleaseDate) AND 
+        (i_minMovPlayDate is NULL OR movPlayDate >= i_minMovPlayDate) AND
+        (i_maxMovPlayDate is NULL OR movPlayDate <= i_maxMovPlayDate) AND
+        (i_includeNotPlayed is NULL OR (i_includeNotPLayed AND movPlayDate is NULL)) AND
+        (movName NOT IN (SELECT movName FROM ManagerFilterThView WHERE manUsername = i_manUsername)); 		
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -968,4 +990,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-02  6:13:21
+-- Dump completed on 2019-12-03  1:09:11
